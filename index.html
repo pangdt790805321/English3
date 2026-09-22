@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>英语闯关 · 三年级上册</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
@@ -121,6 +122,15 @@ const BADGES = [
 function grant(id){ if(!S.badges.includes(id)){ S.badges.push(id); save(); return true } return false }
 
 /* ---------- 工具 ---------- */
+/* 正确答案 -> 选项下标。兼容两种数据写法：选择题的 "A/B/C" 和判断题的 "对/错" */
+function ansIdx(q){
+  const a = q.answer;
+  if (a === '对') return 0;
+  if (a === '错') return 1;
+  const i = 'ABC'.indexOf(a);
+  return i >= 0 ? i : 0;
+}
+function ansText(q){ return q.options[ansIdx(q)] }
 function stars(rate){ return rate >= 1 ? 3 : rate >= .8 ? 2 : rate >= .6 ? 1 : 0 }
 function starStr(n){ return '★'.repeat(n) + '☆'.repeat(3 - n) }
 function unlocked(u, no){
@@ -194,8 +204,9 @@ function paint(){
     body = `<button class="play" onclick="playAudio('${q.audio}')">🔊 点这里听录音（可重复听）</button>
             <div style="height:16px"></div>`;
   }
+  const judge = q.options.length === 2 && q.options[0] === '对';
   body += `<div class="opts">` + q.options.map((o, k) =>
-    `<div class="opt" id="o${k}" onclick="answer(${k})"><span class="k">${'ABC'[k]}</span><span>${esc(o)}</span></div>`).join('') + `</div>
+    `<div class="opt" id="o${k}" onclick="answer(${k})"><span class="k">${judge ? (k === 0 ? '✓' : '✗') : 'ABC'[k]}</span><span>${esc(o)}</span></div>`).join('') + `</div>
     <div class="tip" id="tip"></div>
     <button class="big" id="next" style="display:none" onclick="nextQ()">下一题 →</button>`;
   app.innerHTML = `<div class="top"><button class="btn-back" onclick="go('map')">← 退出</button>
@@ -212,7 +223,7 @@ function playAudio(src){
   AC.play().catch(() => {});
 }
 function answer(k){
-  const q = Q.qs[Q.i], right = 'ABC'.indexOf(q.answer);
+  const q = Q.qs[Q.i], right = ansIdx(q);
   if (Q.answered) return;
   Q.answered = true;
   document.querySelectorAll('.opt').forEach((el, j) => {
@@ -224,7 +235,8 @@ function answer(k){
   tip.style.display = 'block';
   if (k === right){ Q.right++; tip.className = 'tip ok'; tip.innerHTML = '✅ 答对啦！' + (q.explain ? '<br>' + esc(q.explain) : ''); }
   else { Q.wrongIds.push(q.id); tip.className = 'tip no';
-         tip.innerHTML = `❌ 再想想～ 正确答案是 <b>${q.answer}．${esc(q.options[right])}</b>` + (q.explain ? '<br>' + esc(q.explain) : ''); }
+         const lab = (q.answer === '对' || q.answer === '错') ? q.answer : q.answer + '．' + esc(ansText(q));
+         tip.innerHTML = `❌ 再想想～ 正确答案是 <b>${lab}</b>` + (q.explain ? '<br>' + esc(q.explain) : ''); }
   const b = document.getElementById('next');
   b.style.display = 'block';
   b.textContent = Q.i + 1 >= Q.qs.length ? '看结果 →' : '下一题 →';
@@ -263,7 +275,7 @@ function renderResult(u, no){
       ${st >= 2 ? '<div style="color:#1e7a4b;font-weight:700;margin-top:6px">🎉 通关！下一关已解锁</div>' : '<div style="color:#a33;margin-top:6px">正确率到 80% 才能通关哦</div>'}
     </div>
     ${wrongs.length ? `<div class="card"><b>这些题要多练练：</b><div class="wrongbox">` +
-      wrongs.map(q => `• ${esc(q.stem)}　<b>${esc(q.options['ABC'.indexOf(q.answer)])}</b><br><span style="color:#8390a0;font-size:13px">${esc(q.explain || '')}</span>`).join('<br>') + `</div></div>` : ''}
+      wrongs.map(q => `• ${esc(q.stem)}　<b>${esc(ansText(q))}</b><br><span style="color:#8390a0;font-size:13px">${esc(q.explain || '')}</span>`).join('<br>') + `</div></div>` : ''}
     <button class="big" onclick="go('quiz/${u}/${no}')">🔁 再玩一次</button>
     <button class="big gray" onclick="go('map')">🗺️ 回到地图</button>`;
 }
@@ -282,7 +294,7 @@ function renderWrong(){
     html += `<div class="card">` + list.map(q => {
       const L = (LISTEN.flatMap(x => x.questions).includes(q)) ? '🎧 ' : '';
       return `<div class="row"><div style="flex:1;min-width:0">${L}${esc(q.stem)}<br>
-        <span style="color:#1e7a4b">✔ ${esc(q.options['ABC'.indexOf(q.answer)])}</span>
+        <span style="color:#1e7a4b">✔ ${esc(ansText(q))}</span>
         <span style="color:#8390a0;font-size:12px"> ${esc(q.explain || '')}</span></div>
         <div style="cursor:pointer;color:#5b9dff;padding-left:8px" onclick="delWrong('${q.id}')">已掌握</div></div>`;
     }).join('') + `</div>`;
