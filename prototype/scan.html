@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拍照识隐患 · EHS-AI</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  .key-row{display:flex;gap:8px}
+  .key-row input{flex:1}
+  .photo-pick{
+    border:2px dashed #c9d6f2;border-radius:14px;padding:20px;text-align:center;
+    color:#5a6478;font-size:13.5px;cursor:pointer;background:#fff;transition:.2s;
+  }
+  .photo-pick:hover{border-color:var(--blue-600);background:var(--blue-50)}
+  .photo-pick img{max-width:100%;max-height:240px;border-radius:10px;display:block;margin:0 auto 8px}
+  .manual-form{display:none}
+  .manual-form.show{display:block}
+</style>
+<script src="../analytics-config.js"></script>
+<script src="tracker.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <a class="back" href="home.html">‹</a>
+    <h1>拍照识隐患</h1>
+    <span class="pack">🇨🇳 中国包 GB</span>
+  </header>
+
+  <main class="page">
+
+    <!-- ① API 配置（BYOK，Key 存本机） -->
+    <section class="card" style="padding:14px">
+      <b style="font-size:13.5px">🔑 AI 识别配置（可选）</b>
+      <p style="font-size:11.5px;color:var(--ink-soft);margin:5px 0 9px;line-height:1.6">
+        填写 API Key 后可使用 AI 识别（经本机代理 8643 端口，Key 仅存本机浏览器）；
+        <b>不填也可用</b>——直接手动登记隐患。
+      </p>
+      <div class="key-row">
+        <input type="password" id="apiKey" placeholder="API Key（open.bigmodel.cn，glm-4v-flash 免费）" style="border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:12.5px;font-family:inherit">
+        <select id="model" style="border:1px solid var(--line);border-radius:10px;padding:9px;font-size:12.5px">
+          <option value="glm-4v-flash">免费模型</option>
+          <option value="glm-4.5v">glm-4.5v</option>
+        </select>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:9px" onclick="saveKey()">保存配置</button>
+    </section>
+
+    <!-- ② 检查信息 -->
+    <section class="card" style="padding:12px 14px;margin:12px 0;display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">🗂️</span>
+      <div style="flex:1;font-size:12.5px">
+        <input id="insTitle" value="现场综合巡检" style="border:none;font-weight:700;font-size:13.5px;width:100%;font-family:inherit;outline:none">
+        <span style="color:var(--ink-soft)">检查人：张工 · <span id="today"></span></span>
+      </div>
+    </section>
+
+    <!-- ③ 检查模式 -->
+    <div class="chip-row" id="modeRow" style="margin-bottom:12px">
+      <span class="chip on" data-mode="综合">综合</span>
+      <span class="chip" data-mode="建筑施工">🏗️ 建筑施工</span>
+      <span class="chip" data-mode="化工">🧪 化工</span>
+      <span class="chip" data-mode="消防">🧯 消防</span>
+      <span class="chip" data-mode="用电安全">⚡ 用电安全</span>
+    </div>
+
+    <!-- ④ 照片 -->
+    <div class="photo-pick" id="pick">
+      <img id="preview" style="display:none">
+      <span id="pickHint">📷 点击选择 / 拍摄现场照片（逐张识别）</span>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn btn-primary" style="flex:1" id="aiBtn" onclick="runAI()">🤖 AI 识别照片</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="showManual()">✍️ 手动登记</button>
+    </div>
+
+    <!-- ⑤ 手动登记表单 -->
+    <section class="card manual-form" id="manualForm" style="margin-top:14px">
+      <b style="font-size:14px">✍️ 手动登记隐患</b>
+      <div class="field" style="margin-top:10px">
+        <label>隐患描述</label>
+        <input id="mDesc" placeholder="如：临边作业未设置防护栏杆">
+      </div>
+      <div class="field">
+        <label>风险等级</label>
+        <select id="mRisk">
+          <option value="high">高风险</option>
+          <option value="medium" selected>中风险</option>
+          <option value="low">低风险</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>关联标准条文（输入关键词检索，如：临边 / 配电箱 / 气瓶）</label>
+        <input id="mCiteQ" placeholder="条文关键词" oninput="renderCitePick()">
+        <div id="citePick" style="margin-top:8px"></div>
+      </div>
+      <div class="field">
+        <label>整改建议</label>
+        <input id="mFix" placeholder="一句话整改措施（可选）">
+      </div>
+      <button class="btn btn-green btn-block" onclick="saveManual()">✔ 保存到本次检查</button>
+    </section>
+
+    <p class="foot-note">AI 条文引用由模型生成可能存在误差，正式引用请核对官方文本<br>数据保存在本机浏览器，不会上传</p>
+  </main>
+
+  <!-- AI 分析中遮罩 -->
+  <div class="analyzing" id="analyzing">
+    <div class="mask"></div>
+    <div class="box">
+      <h3>🔬 AI 识别中…</h3>
+      <div class="step-list" id="stepList">
+        <div class="step-item"><span class="dot">✓</span>上传照片与场景识别</div>
+        <div class="step-item"><span class="dot">✓</span>隐患目标检测（VLM 推理）</div>
+        <div class="step-item"><span class="dot">✓</span>条文匹配与置信度校验</div>
+        <div class="step-item"><span class="dot">✓</span>生成隐患清单</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部操作 -->
+  <div class="action-bar">
+    <button class="btn btn-ghost" onclick="finish()">完成检查</button>
+    <button class="btn btn-primary" onclick="goResult()">查看本次结果 →</button>
+  </div>
+
+<script src="app.js"></script>
+<script>
+let mode = '综合';
+let photo = null;           // 压缩后的 dataURL
+let pickedCite = null;      // 手动登记选中的条文
+
+document.getElementById('today').textContent = todayISO();
+document.getElementById('apiKey').value = DB.apiKey();
+document.getElementById('model').value = DB.model();
+
+// 保证存在当前检查任务（12 小时内的任务继续使用）
+function ensureInspection(){
+  let ins = DB.currentInspection();
+  if(!ins || Date.now() - ins.created > 12*3600*1000){
+    ins = { id: uid(), title: document.getElementById('insTitle').value || '现场综合巡检',
+            site: '现场', date: todayISO(), inspector: '张工', mode, created: Date.now(), hazards: [] };
+    DB.saveInspection(ins); DB.setCurrent(ins.id);
+  }
+  return ins;
+}
+ensureInspection();
+
+// 模式选择
+document.querySelectorAll('#modeRow .chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('#modeRow .chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on'); mode = c.dataset.mode;
+  });
+});
+
+// 保存 Key
+function saveKey(){
+  Store.set('ehs_key', document.getElementById('apiKey').value.trim());
+  Store.set('ehs_model', document.getElementById('model').value);
+  toast(DB.apiKey() ? '配置已保存（仅存本机浏览器）' : '已清空 Key，可继续手动登记');
+}
+
+// 照片选择与压缩
+const pick = document.getElementById('pick'), fi = document.getElementById('fileInput');
+pick.addEventListener('click', ()=>fi.click());
+fi.addEventListener('change', async ()=>{
+  if(!fi.files[0]) return;
+  try{
+    photo = await compressImage(fi.files[0]);
+    document.getElementById('preview').src = photo;
+    document.getElementById('preview').style.display = '';
+    document.getElementById('pickHint').textContent = '照片已就绪 · 点击可更换';
+  }catch(e){ toast('图片读取失败：' + e.message); }
+});
+
+// AI 识别
+async function runAI(){
+  const ins = ensureInspection();
+  ins.title = document.getElementById('insTitle').value || ins.title;
+  ins.mode = mode; DB.saveInspection(ins);
+
+  if(!photo){ toast('请先选择照片，或改用手动登记'); return; }
+  if(!DB.apiKey()){ toast('未配置 API Key：请填写并保存，或使用手动登记'); return; }
+
+  const overlay = document.getElementById('analyzing');
+  const steps = document.querySelectorAll('#stepList .step-item');
+  overlay.classList.add('show');
+  steps.forEach(s=>s.classList.remove('done','doing'));
+  let i = 0; const tick = ()=>{ if(i>0) steps[i-1].classList.replace('doing','done'); if(i<steps.length){ steps[i].classList.add('doing'); i++; setTimeout(tick, 700); } };
+  tick();
+
+  try{
+    const list = await analyzePhotoAI({ dataUrl: photo, mode,
+      juris: '中国 GB / JGJ / TSG 体系，辅以 OSHA 对照'
+    });
+    if(!list.length){
+      overlay.classList.remove('show');
+      toast('AI 未识别出可确认隐患（可换照片或手动登记）'); return;
+    }
+    list.forEach(item=>{
+      const h = DB.saveHazard({
+        desc: item.hazard, risk: item.risk || 'review', confidence: item.confidence ?? null,
+        citation: item.citation_standard ? { std: item.citation_standard, clause: '', text: item.citation_text || '' } : null,
+        fix: item.fix || '', source: 'ai', status: 'todo', photo,
+        created: Date.now(), inspectionId: ins.id,
+      });
+      addEvent(h, 'AI 拍照识别（置信度 ' + (item.confidence ?? '—') + '%）');
+      ins.hazards.push(h.id);
+    });
+    DB.saveInspection(ins);
+    overlay.classList.remove('show');
+    toast('识别完成：' + list.length + ' 项隐患已保存');
+    setTimeout(()=>location.href = 'result.html', 800);
+  }catch(e){
+    overlay.classList.remove('show');
+    const hint = String(e.message).includes('Failed to fetch') ? '（请确认已运行 demo/server.py 代理）' : '';
+    toast('识别失败：' + e.message + hint);
+  }
+}
+
+// 手动登记
+function showManual(){ document.getElementById('manualForm').classList.toggle('show'); }
+function renderCitePick(){
+  const q = document.getElementById('mCiteQ').value;
+  const box = document.getElementById('citePick');
+  const hits = findClauses(q).slice(0, 5);
+  box.innerHTML = q.trim() ? hits.map(c=>`
+    <div class="cite" style="margin-bottom:7px;cursor:pointer;${pickedCite===c.id?'outline:2px solid var(--blue-600)':''}" onclick="pickedCite='${c.id}';renderCitePick()">
+      <span class="std">${c.sys}</span><b>${c.code} ${c.clause?'§'+c.clause:''}</b><br>${c.title}
+    </div>`).join('') || '<span style="font-size:12px;color:#9aa5b8">未命中条文，可不关联</span>'
+    : '';
+}
+function saveManual(){
+  const desc = document.getElementById('mDesc').value.trim();
+  if(!desc){ toast('请填写隐患描述'); return; }
+  const ins = ensureInspection();
+  const c = pickedCite ? CLAUSES.find(x=>x.id===pickedCite) : null;
+  const h = DB.saveHazard({
+    desc, risk: document.getElementById('mRisk').value, confidence: null,
+    citation: c ? { std: c.code, clause: c.clause, text: c.text, id: c.id } : null,
+    fix: document.getElementById('mFix').value.trim(), source: 'manual', status: 'todo',
+    photo, created: Date.now(), inspectionId: ins.id,
+  });
+  addEvent(h, '手动登记');
+  ins.hazards.push(h.id); DB.saveInspection(ins);
+  document.getElementById('mDesc').value = ''; document.getElementById('mFix').value = '';
+  pickedCite = null; renderCitePick();
+  toast('已保存：' + desc.slice(0,12) + '…');
+}
+
+// 完成 / 查看结果
+function finish(){ toast('本次检查已保存，可在台账与报告中查看'); setTimeout(()=>location.href='home.html', 900); }
+function goResult(){ location.href = 'result.html'; }
+</script>
+</div>
+</body>
+</html>

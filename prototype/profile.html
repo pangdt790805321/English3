@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人中心 · EHS-AI</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  .me-card{
+    background:linear-gradient(135deg,#0b2a5b,#1449b0);border-radius:18px;padding:22px 20px;color:#fff;
+    display:flex;align-items:center;gap:15px;box-shadow:0 12px 30px rgba(11,42,91,.3);
+  }
+  .avatar{
+    flex:none;width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.16);
+    display:grid;place-items:center;font-size:28px;border:2px solid rgba(255,255,255,.4);
+  }
+  .me-row{display:flex;align-items:center;gap:11px;padding:13px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+  .me-row:last-child{border-bottom:none}
+  .me-row .mi{flex:none;width:34px;height:34px;border-radius:10px;background:var(--blue-50);display:grid;place-items:center;font-size:17px}
+  .me-row h3{font-size:14px;font-weight:700}
+  .me-row p{font-size:11.5px;color:var(--ink-soft)}
+  .me-row .right{margin-left:auto;color:var(--ink-soft);font-size:12px;display:flex;align-items:center;gap:6px}
+</style>
+<script src="../analytics-config.js"></script>
+<script src="tracker.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <a class="back" href="../index.html#portal">‹</a>
+    <h1>个人中心</h1>
+    <span class="pack">🇨🇳 中国包 GB</span>
+  </header>
+
+  <main class="page">
+
+    <!-- 个人信息 -->
+    <section class="me-card">
+      <span class="avatar">👷</span>
+      <div style="flex:1">
+        <b style="font-size:17px">张工</b>
+        <p style="font-size:12px;color:#c9d8ff;margin-top:2px">注册安全工程师 · 中级 · 12 年经验</p>
+        <span style="display:inline-block;margin-top:7px;font-size:10.5px;font-weight:800;background:linear-gradient(135deg,#ff7a1a,#ffb066);padding:2px 10px;border-radius:999px">PRO 会员</span>
+      </div>
+      <button class="btn btn-sm" style="background:rgba(255,255,255,.16);color:#fff;border:none" onclick="toast('原型演示：编辑资料')">编辑</button>
+    </section>
+
+    <!-- 数据总览（真实数据） -->
+    <div class="stats-row">
+      <div class="stat"><b id="stIns">0</b><span>检查任务</span></div>
+      <div class="stat"><b id="stHz">0</b><span>隐患总数</span></div>
+      <div class="stat"><b id="learnDone">0<small style="font-size:12px">/12</small></b><span>修炼进度</span></div>
+    </div>
+
+    <!-- 学习进度（真实读取修炼库打卡） -->
+    <a href="academy.html">
+      <section class="card" style="margin-top:14px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <b style="font-size:14px">📚 安全专家修炼库 · 学习进度</b>
+          <span style="font-size:11.5px;color:var(--blue-600);font-weight:700">继续学习 ›</span>
+        </div>
+        <div class="prog-bar" style="height:9px;background:var(--blue-50);border-radius:999px;overflow:hidden;margin-top:9px">
+          <i id="learnBar" style="display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue-600),var(--green));border-radius:999px"></i>
+        </div>
+        <p style="font-size:11.5px;color:var(--ink-soft);margin-top:6px" id="learnHint">在修炼库给专题打卡后，这里实时同步</p>
+      </section>
+    </a>
+
+    <!-- 法规包 -->
+    <div class="sec-head"><h2>法规包管理</h2></div>
+    <section class="card" style="padding:4px 14px">
+      <div class="me-row" onclick="toast('已切换默认法规包：中国 GB')">
+        <span class="mi">🇨🇳</span>
+        <div><h3>中国包 · GB / JGJ / TSG</h3><p>当前默认 · 含 OSHA 对照</p></div>
+        <span class="right"><span class="status done">使用中</span></span>
+      </div>
+      <div class="me-row" onclick="toast('原型演示：添加美国包（Pro 功能）')">
+        <span class="mi">🇺🇸</span>
+        <div><h3>美国包 · OSHA 29 CFR</h3><p>条文全文开放 · 1910 / 1926</p></div>
+        <span class="right">添加 ›</span>
+      </div>
+      <div class="me-row" onclick="toast('原型演示：添加国际包（Pro 功能）')">
+        <span class="mi">🌐</span>
+        <div><h3>国际包 · ISO 45001 / EN / ILO</h3><p>条文摘引 + 官方购买链接</p></div>
+        <span class="right">添加 ›</span>
+      </div>
+    </section>
+
+    <!-- 我的内容 -->
+    <div class="sec-head"><h2>我的内容</h2></div>
+    <section class="card" style="padding:4px 14px">
+      <a class="me-row" href="log.html">
+        <span class="mi">🔁</span>
+        <div><h3>我的隐患台账</h3><p>3 项待处理 · 31 项已闭环</p></div>
+        <span class="right">›</span>
+      </a>
+      <a class="me-row" href="report.html">
+        <span class="mi">📄</span>
+        <div><h3>我的检查报告</h3><p>最近：EHS-2026-1112-03 · 今天 09:41</p></div>
+        <span class="right">›</span>
+      </a>
+      <a class="me-row" href="search.html">
+        <span class="mi">⭐</span>
+        <div><h3>我的引用夹</h3><p id="favLine">暂无收藏条文</p></div>
+        <span class="right">›</span>
+      </a>
+    </section>
+
+    <!-- 设置 -->
+    <div class="sec-head"><h2>设置</h2></div>
+    <section class="card" style="padding:4px 14px">
+      <div class="me-row" onclick="toast('原型演示：语言切换（中文/English）')">
+        <span class="mi">🗣️</span>
+        <div><h3>界面语言</h3><p>中文（可切换 English）</p></div>
+        <span class="right">›</span>
+      </div>
+      <div class="me-row" onclick="toast('原型演示：通知设置')">
+        <span class="mi">🔔</span>
+        <div><h3>通知提醒</h3><p>整改到期 · 复查提醒 · 法规更新</p></div>
+        <span class="right">已开启 ›</span>
+      </div>
+      <div class="me-row" onclick="toast('EHS-AI 智能应用平台 v0.1 · 原型演示')">
+        <span class="mi">ℹ️</span>
+        <div><h3>关于平台</h3><p>版本 · 隐私政策 · 免责声明</p></div>
+        <span class="right">›</span>
+      </div>
+      <div class="me-row" onclick="toast('原型演示：已退出登录')">
+        <span class="mi">🚪</span>
+        <div><h3 style="color:var(--red)">退出登录</h3></div>
+        <span class="right">›</span>
+      </div>
+    </section>
+
+    <p class="foot-note">AI 辅助工具 · 不替代专业人员现场判断<br>© 2026 EHS-AI 智能应用平台 · 原型演示</p>
+  </main>
+
+  <!-- 底部导航 -->
+  <nav class="tabbar">
+    <a href="home.html"><span class="ico">🏠</span>工作台</a>
+    <a href="log.html"><span class="ico">🔁</span>隐患台账</a>
+    <a href="search.html"><span class="ico">📖</span>标准</a>
+    <a href="academy.html"><span class="ico">📚</span>修炼库</a>
+  </nav>
+
+<script src="app.js"></script>
+<script>
+  // 真实统计：检查任务 / 隐患 / 引用夹 / 修炼进度
+  (function(){
+    document.getElementById('stIns').textContent = DB.inspections().length;
+    document.getElementById('stHz').textContent = DB.listHazards().length;
+    const favs = DB.citations().map(id => (typeof CLAUSES!=='undefined' ? CLAUSES.find(c=>c.id===id) : null)).filter(Boolean);
+    document.getElementById('favLine').textContent = favs.length
+      ? favs.slice(0,2).map(c=>c.code).join(' · ') + (favs.length>2 ? ' 等 ' + favs.length + ' 条' : '')
+      : '暂无收藏条文';
+  })();
+
+  // 读取修炼库打卡进度（与 academy.html 共享 localStorage）
+  function loadAcademyProgress(){
+    let done = 0;
+    try{
+      const s = JSON.parse(localStorage.getItem('academy_status') || '{}');
+      done = Object.values(s).filter(v => v === 2).length;
+    }catch(e){}
+    document.getElementById('learnBar').style.width = (done / 12 * 100) + '%';
+    document.getElementById('learnDone').innerHTML = done + '<small style="font-size:12px">/12</small>';
+    document.getElementById('learnHint').textContent = done
+      ? '已完成 ' + done + ' 个专题 · 主线下一册：' + (done < 6 ? '核心专题' : done < 11 ? '扩展专题' : 'T12 体系整合')
+      : '在修炼库给专题打卡后，这里实时同步';
+  }
+  loadAcademyProgress();
+
+  function toast(msg){
+    let t = document.querySelector('.toast');
+    if(!t){ t = document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 3000);
+  }
+</script>
+</div>
+</body>
+</html>

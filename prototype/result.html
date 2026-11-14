@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>识别结果 · EHS-AI</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  .photo-view{position:relative;border-radius:14px;overflow:hidden;background:#e9eef7;max-height:280px}
+  .photo-view img{width:100%;display:block;object-fit:cover;max-height:280px}
+  .empty-tip{text-align:center;padding:36px 16px;color:var(--ink-soft);font-size:13.5px}
+</style>
+<script src="../analytics-config.js"></script>
+<script src="tracker.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <a class="back" href="scan.html">‹</a>
+    <h1>本次检查结果</h1>
+    <span class="pack" id="insInfo"></span>
+  </header>
+
+  <main class="page">
+    <div id="content"></div>
+
+    <div class="action-bar">
+      <a class="btn btn-ghost" href="scan.html">＋ 继续识别/登记</a>
+      <a class="btn btn-primary" href="report.html">生成检查报告 →</a>
+    </div>
+  </main>
+
+  <nav class="tabbar">
+    <a href="home.html"><span class="ico">🏠</span>工作台</a>
+    <a href="log.html"><span class="ico">🔁</span>隐患台账</a>
+    <a href="search.html"><span class="ico">📖</span>标准</a>
+    <a href="academy.html"><span class="ico">📚</span>修炼库</a>
+  </nav>
+
+<script src="app.js"></script>
+<script>
+const RISK = { high:['高风险','high'], medium:['中风险','mid'], low:['低风险','mid'], review:['待人工复核','lowconf'] };
+
+function render(){
+  const ins = DB.currentInspection();
+  const box = document.getElementById('content');
+  const hazards = (ins ? ins.hazards.map(id => DB.hazard(id)).filter(Boolean) : []);
+
+  document.getElementById('insInfo').textContent = ins ? (ins.title + ' · ' + ins.date) : '无进行中任务';
+
+  if(!hazards.length){
+    box.innerHTML = `
+      <div class="empty-tip">
+        <span style="font-size:40px;display:block;margin-bottom:10px">📷</span>
+        本次检查还没有隐患记录<br>
+        <a class="btn btn-primary btn-sm" style="margin-top:16px" href="scan.html">去拍照识别 / 手动登记</a>
+      </div>`;
+    return;
+  }
+
+  const photo = hazards.find(h=>h.photo)?.photo;
+  const nHigh = hazards.filter(h=>h.risk==='high').length;
+  const nRev  = hazards.filter(h=>h.risk==='review').length;
+
+  box.innerHTML = `
+    ${photo ? `<div class="photo-view"><img src="${photo}"></div>` : ''}
+    <section class="card" style="margin-top:12px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:26px">🤖</div>
+      <div style="font-size:12.5px;color:var(--ink-soft)">
+        本次检查 <b style="color:var(--ink);font-size:15px">${hazards.length}</b> 项隐患 · 高风险 ${nHigh} 项${nRev?` · 待复核 ${nRev} 项`:''}<br>
+        ${ins.title} · ${ins.inspector} · ${fmt(ins.created)}
+      </div>
+    </section>
+    <div class="sec-head"><h2>隐患清单</h2><span style="font-size:12px;color:var(--ink-soft)">点击展开 · 状态可流转</span></div>
+    ${hazards.map((h,i)=>hzCard(h,i)).join('')}
+    <p class="foot-note">AI 引用条文由模型生成可能存在误差 · 手动登记引用来自平台条文库<br>点击"去处理"进入隐患详情指派整改</p>`;
+}
+
+function hzCard(h, i){
+  const [label, cls] = RISK[h.risk] || RISK.review;
+  const idxCls = h.risk==='high' ? '' : (h.risk==='review' ? 'amber' : 'orange');
+  return `
+  <section class="card hz-card">
+    <div class="hz-head" onclick="this.parentNode.classList.toggle('open')">
+      <span class="idx ${idxCls}">${i+1}</span>
+      <div style="flex:1">
+        <h3>${esc(h.desc)}</h3>
+        <div class="hz-meta">
+          <span class="risk ${cls}">${label}</span>
+          ${h.confidence!=null ? `<span class="conf ${h.confidence<70?'warn':''}">置信度 <b>${h.confidence}%</b></span>` : ''}
+          ${h.citation ? `<span style="font-size:11.5px;color:var(--blue-700);font-weight:700">${esc(h.citation.std)}</span>` : ''}
+          <span class="status ${stCls(h.status)}" style="margin-left:auto">${stName(h.status)}</span>
+        </div>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="hz-body">
+      ${h.citation ? `<div class="cite" ${h.source==='manual'?'':'style="border-left-color:var(--amber)"'}>
+        <span class="std">${h.source==='manual'?'GB':'AI'}</span><b>${esc(h.citation.std)}${h.citation.clause?' §'+esc(h.citation.clause):''}</b>
+        ${h.citation.text ? `<q>${esc(h.citation.text)}</q>` : ''}
+        ${h.source==='manual' && h.citation.id ? `<div style="margin-top:6px;font-size:11.5px">↔ 平台条文库已核验条目</div>` : (h.source!=='manual' ? `<div style="margin-top:6px;font-size:11.5px">⚠ AI 生成引用，请人工核对官方文本</div>` : '')}
+      </div>` : '<div class="cite">未关联条文（可在标准查询中检索后从详情页关联）</div>'}
+      ${h.fix ? `<p class="fix"><b>整改建议：</b>${esc(h.fix)}</p>` : ''}
+      <div class="hz-actions">
+        <a class="btn btn-ghost btn-sm" href="hazard-detail.html?id=${h.id}">详情 / 指派整改</a>
+        <button class="btn btn-ghost btn-sm" onclick="delHazard('${h.id}')">删除</button>
+      </div>
+    </div>
+  </section>`;
+}
+
+function stName(s){ return {todo:'待整改', doing:'整改中', check:'待复查', done:'已闭环'}[s] || s; }
+function stCls(s){ return {todo:'todo', doing:'doing', check:'check', done:'done'}[s] || 'todo'; }
+
+function delHazard(id){
+  const h = DB.hazard(id); if(!h) return;
+  const all = DB.hazards(); delete all[id]; Store.set('ehs_hazards', all);
+  const ins = DB.currentInspection();
+  if(ins){ ins.hazards = ins.hazards.filter(x=>x!==id); DB.saveInspection(ins); }
+  toast('已删除'); render();
+}
+
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+render();
+</script>
+</div>
+</body>
+</html>

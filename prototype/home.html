@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工作台 · EHS-AI</title>
+<link rel="stylesheet" href="app.css">
+<script src="../analytics-config.js"></script>
+<script src="tracker.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <h1>🛡 EHS-AI 工作台</h1>
+    <a class="pack" href="profile.html" style="margin-left:auto">🇨🇳 中国包 GB ▾</a>
+    <a href="profile.html" style="width:32px;height:32px;border-radius:50%;background:var(--blue-50);display:grid;place-items:center;font-size:16px;text-decoration:none">👷</a>
+  </header>
+
+  <main class="page">
+
+    <!-- 主 CTA -->
+    <section class="cta-card">
+      <h2>开始现场检查</h2>
+      <p>拍一张照片，AI 找出隐患并给出条文依据；<br>或手动登记隐患——数据保存在本机，可直接生成报告</p>
+      <a href="scan.html" class="btn btn-primary" style="background:#fff;color:var(--blue-700);box-shadow:0 6px 18px rgba(0,0,0,.18)">📷 拍照识隐患</a>
+      <div class="modes">支持 AI 识别（需 API Key）与手动登记 · 综合施工 / 化工 / 消防 / 用电模式</div>
+    </section>
+
+    <!-- 统计（真实数据） -->
+    <div class="stats-row">
+      <div class="stat"><b id="stIns">0</b><span>检查任务</span></div>
+      <div class="stat"><b id="stHz">0</b><span>发现隐患</span></div>
+      <div class="stat"><b id="stDone">0%</b><span>闭环率</span></div>
+    </div>
+
+    <!-- 修炼库 banner -->
+    <a href="academy.html" style="display:block;margin-top:14px">
+      <section class="card" style="display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,#0b2a5b,#1449b0);border:none;color:#fff">
+        <span style="font-size:30px">📚</span>
+        <div style="flex:1">
+          <b style="font-size:15px">安全专家修炼库</b>
+          <p style="font-size:11.5px;color:#c9d8ff;margin-top:2px">12 册手册 · 12 张检查表 · 18 个月修炼路线</p>
+        </div>
+        <span style="font-size:12px;font-weight:700;background:rgba(255,255,255,.16);padding:5px 12px;border-radius:999px">进入 ›</span>
+      </section>
+    </a>
+
+    <!-- 快捷入口 -->
+    <div class="sec-head"><h2>快捷功能</h2></div>
+    <div class="quick-grid">
+      <a class="quick" href="scan.html"><span class="qi">📷</span>拍照识隐患</a>
+      <a class="quick" href="log.html"><span class="qi">🔁</span>隐患台账</a>
+      <a class="quick" href="report.html"><span class="qi">📄</span>检查报告</a>
+      <a class="quick" href="search.html"><span class="qi">📖</span>标准查询</a>
+    </div>
+
+    <!-- 最近检查（真实数据） -->
+    <div class="sec-head"><h2>最近检查</h2><a href="log.html">台账 ›</a></div>
+    <section class="card" id="recentBox" style="padding:4px 14px"></section>
+
+    <p class="foot-note">AI 辅助工具 · 不替代专业人员现场判断 · 数据保存在本机浏览器<br>© 2026 EHS-AI 智能应用平台</p>
+  </main>
+
+  <nav class="tabbar">
+    <a class="on" href="home.html"><span class="ico">🏠</span>工作台</a>
+    <a href="log.html"><span class="ico">🔁</span>隐患台账</a>
+    <a href="search.html"><span class="ico">📖</span>标准</a>
+    <a href="academy.html"><span class="ico">📚</span>修炼库</a>
+  </nav>
+
+<script src="app.js"></script>
+<script>
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function render(){
+  const insList = DB.inspections();
+  const hzList = DB.listHazards();
+  const done = hzList.filter(h=>h.status==='done').length;
+  document.getElementById('stIns').textContent = insList.length;
+  document.getElementById('stHz').textContent = hzList.length;
+  document.getElementById('stDone').textContent = hzList.length ? Math.round(done/hzList.length*100) + '%' : '—';
+
+  const box = document.getElementById('recentBox');
+  if(!insList.length){
+    box.innerHTML = `<div style="text-align:center;padding:22px 12px;color:var(--ink-soft);font-size:13px">
+      还没有检查任务<br><a class="btn btn-primary btn-sm" style="margin-top:12px" href="scan.html">开始第一次检查</a></div>`;
+    return;
+  }
+  const icons = ['🏗️','⚡','🧯','🧪','🔍'];
+  box.innerHTML = insList.slice(0,5).map((ins,i)=>{
+    const hz = ins.hazards.map(id=>DB.hazard(id)).filter(Boolean);
+    const open = hz.filter(h=>h.status!=='done').length;
+    return `
+    <a class="recent-item" href="result.html">
+      <span class="ri">${icons[i%icons.length]}</span>
+      <div>
+        <h3>${esc(ins.title)}</h3>
+        <p>${ins.date} · ${esc(ins.inspector)} · ${esc(ins.mode||'综合')}模式</p>
+      </div>
+      <div class="right">
+        <span class="status ${open?'todo':'done'}">${open?'进行中':'已闭环'}</span>
+        <p style="font-size:11px;color:var(--ink-soft);margin-top:3px">${hz.length} 项隐患</p>
+      </div>
+    </a>`;
+  }).join('');
+}
+render();
+</script>
+</div>
+</body>
+</html>

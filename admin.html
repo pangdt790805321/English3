@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据看板 · EHS-AI</title>
+<link rel="stylesheet" href="prototype/app.css">
+<style>
+  .board{max-width:960px;margin:0 auto;padding:28px 20px 60px}
+  .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center}
+  .kpi b{display:block;font-size:26px;color:var(--blue-700)}
+  .kpi span{font-size:12px;color:var(--ink-soft)}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+  th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left}
+  th{background:var(--blue-50);color:var(--blue-900)}
+  .setup{background:#fff8ec;border:1px solid #ffe1ad;border-radius:12px;padding:14px 16px;font-size:13.5px;color:#8a5a00;line-height:1.8;margin-top:18px}
+  .ok-badge{background:var(--green-bg);color:var(--green);font-size:11px;font-weight:800;padding:2px 10px;border-radius:999px}
+  .warn-badge{background:var(--red-bg);color:var(--red);font-size:11px;font-weight:800;padding:2px 10px;border-radius:999px}
+  @media(max-width:720px){.kpi-grid{grid-template-columns:1fr 1fr}}
+</style>
+<script src="analytics-config.js"></script>
+<script src="prototype/tracker.js"></script>
+</head>
+<body>
+<div class="board">
+  <h1 style="font-size:22px;color:var(--blue-900)">📊 数据看板</h1>
+  <p style="font-size:13px;color:var(--ink-soft);margin-top:6px">
+    本页展示两部分：<b>① 本机使用统计</b>（当前浏览器，实时）；<b>② 全站访问统计</b>（所有访问者，需配置统计服务，见下方说明）。
+    <a href="index.html" style="color:var(--blue-600)">← 返回平台首页</a>
+  </p>
+
+  <h2 style="font-size:16px;margin-top:26px">① 本机使用统计（当前浏览器）</h2>
+  <div class="kpi-grid" id="kpis"></div>
+  <table id="modTable"></table>
+  <p style="font-size:11.5px;color:#9aa5b8;margin-top:8px">注：平台数据（检查、隐患等）保存在各访问者自己的浏览器中，属于隐私设计；看板只统计访问与板块使用次数，不涉及检查内容。</p>
+
+  <h2 style="font-size:16px;margin-top:30px">② 全站访问统计（所有访问者）</h2>
+  <p id="gcState" style="font-size:13.5px"></p>
+  <table id="gcLinks" style="margin-top:10px"></table>
+
+  <div class="setup" id="setupBox"></div>
+</div>
+
+<script src="analytics-config.js"></script>
+<script>
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmt(t){ const n=new Date(t); const p=x=>String(x).padStart(2,'0'); return `${n.getMonth()+1}-${p(n.getDate())} ${p(n.getHours())}:${p(n.getMinutes())}`; }
+
+// ---- ① 本机统计 ----
+const s = JSON.parse(localStorage.getItem('ehs_stats') || '{"pv":{},"mod":{},"events":[]}');
+const totalPv = Object.values(s.pv||{}).reduce((a,b)=>a+b,0);
+const totalMod = Object.values(s.mod||{}).reduce((a,b)=>a+b,0);
+document.getElementById('kpis').innerHTML = `
+  <div class="kpi"><b>${Object.keys(s.pv||{}).length}</b><span>访问页面数</span></div>
+  <div class="kpi"><b>${totalPv}</b><span>页面浏览(PV)</span></div>
+  <div class="kpi"><b>${totalMod}</b><span>板块使用次数</span></div>
+  <div class="kpi"><b>${(s.events||[]).length}</b><span>最近事件记录</span></div>`;
+
+const MODNAME = { scan:'拍照识隐患', search:'标准查询', academy:'修炼库', report:'检查报告', log:'隐患台账',
+  result:'识别结果', detail:'隐患详情', profile:'个人中心', demo:'AI识别Demo', en:'国际版' };
+document.getElementById('modTable').innerHTML = `
+  <tr><th>板块</th><th>使用次数</th></tr>` +
+  (Object.keys(s.mod||{}).length
+    ? Object.entries(s.mod).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<tr><td>${MODNAME[k]||esc(k)}</td><td><b>${v}</b></td></tr>`).join('')
+    : '<tr><td colspan="2" style="color:#9aa5b8">暂无记录</td></tr>') +
+  ((s.events||[]).length ? `<tr><th style="margin:"></th></tr>` : '');
+
+// 最近事件
+if((s.events||[]).length){
+  document.getElementById('modTable').insertAdjacentHTML('beforeend',
+    `<tr><th colspan="2">最近使用记录</th></tr>` +
+    s.events.slice(0,15).map(e=>`<tr><td>${fmt(e.t)}</td><td>${MODNAME[e.name]||esc(e.name)} ${e.label?('· '+esc(e.label)):''}</td></tr>`).join(''));
+}
+
+// ---- ② 远程统计状态 ----
+const gc = (window.EHS_ANALYTICS && window.EHS_ANALYTICS.goatcounter) || '';
+document.getElementById('gcState').innerHTML = gc
+  ? `<span class="ok-badge">已配置</span> 统计服务：<b>${esc(gc)}</b>`
+  : `<span class="warn-badge">未配置</span> 尚未接入全站统计服务，目前只能看到上面本机的数据。`;
+document.getElementById('gcLinks').innerHTML = gc
+  ? `<tr><th>项目</th><th>地址</th></tr>
+     <tr><td>全站数据看板（总览/趋势/地区）</td><td><a href="https://${esc(gc)}" target="_blank" style="color:var(--blue-600)">https://${esc(gc)}</a></td></tr>
+     <tr><td>公开统计页（可分享给同事）</td><td><a href="https://${esc(gc)}/stats" target="_blank" style="color:var(--blue-600)">https://${esc(gc)}/stats</a></td></tr>`
+  : '';
+
+document.getElementById('setupBox').innerHTML = gc ? '' : `
+  <b>三步接入全站统计（约 3 分钟）：</b><br>
+  1. 打开 <a href="https://www.goatcounter.com" target="_blank" style="color:#8a5a00">goatcounter.com</a>，用邮箱免费注册（非商业免费）；<br>
+  2. 注册完成后进入后台，复制你的统计域名（形如 <code>xxx.goatcounter.com</code>）；<br>
+  3. 编辑网站根目录的 <code>analytics-config.js</code>，把域名填入 <code>goatcounter: ''</code> 的引号内，重新推送 GitHub 即生效。<br>
+  之后所有访问者的 PV、各板块使用次数、来访地区与趋势，都能在 GoatCounter 后台看到。`;
+</script>
+</body>
+</html>

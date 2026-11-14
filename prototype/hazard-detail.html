@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>隐患详情 · EHS-AI</title>
+<link rel="stylesheet" href="app.css">
+<script src="../analytics-config.js"></script>
+<script src="tracker.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <a class="back" href="result.html">‹</a>
+    <h1>隐患详情</h1>
+    <span class="pack">整改闭环</span>
+  </header>
+
+  <main class="page">
+    <div id="content"><p style="text-align:center;color:var(--ink-soft);padding:40px 0">未找到隐患（请从结果页或台账进入）</p></div>
+  </main>
+
+  <div class="action-bar">
+    <a class="btn btn-ghost" href="result.html">‹ 返回结果</a>
+    <a class="btn btn-primary" href="report.html">生成检查报告 →</a>
+  </div>
+
+<script src="app.js"></script>
+<script>
+const id = new URLSearchParams(location.search).get('id');
+const h = id ? DB.hazard(id) : null;
+const RISK = { high:['高风险','high'], medium:['中风险','mid'], low:['低风险','mid'], review:['待人工复核','lowconf'] };
+
+if(h){
+  const [label, cls] = RISK[h.risk] || RISK.review;
+
+  // 找条文库里同体系的对照条文
+  const gb = CLAUSES.filter(c=>c.sys==='GB' && findClauses(h.desc.split(/[，,。、（ (]/)[0]||'').some(x=>x.id===c.id)).slice(0,2);
+  const osha = CLAUSES.filter(c=>c.sys==='OSHA' && findClauses(h.desc.split(/[，,。、（ (]/)[0]||'').some(x=>x.id===c.id)).slice(0,1);
+  const kw = (h.desc.match(/[\u4e00-\u9fa5]{2,4}/g)||[]).slice(0,3).join(' ');
+  const related = kw ? findClauses(kw.split(' ')[0]).slice(0,3) : [];
+  const refGb = related.filter(c=>c.sys==='GB').slice(0,2);
+  const refOsha = related.filter(c=>c.sys==='OSHA').slice(0,1);
+  const refIso = CLAUSES.filter(c=>c.sys==='ISO').slice(0,1);
+
+  document.getElementById('content').innerHTML = `
+    ${h.photo ? `<div class="scene" style="aspect-ratio:4/3"><img src="${h.photo}" style="width:100%;height:100%;object-fit:cover"></div>` : ''}
+
+    <section class="card" style="margin-top:14px">
+      <h2 style="font-size:16.5px;line-height:1.5">${esc(h.desc)}</h2>
+      <div class="hz-meta" style="margin:9px 0 0">
+        <span class="risk ${cls}">${label}</span>
+        ${h.confidence!=null ? `<span class="conf ${h.confidence<70?'warn':''}">置信度 <b>${h.confidence}%</b></span>` : ''}
+        <span style="font-size:11.5px;color:var(--ink-soft)">${h.source==='manual'?'手动登记':'AI 识别'} · ${fmt(h.created)}</span>
+      </div>
+      <div style="margin-top:9px">
+        <span class="status ${{todo:'todo',doing:'doing',check:'check',done:'done'}[h.status]}">${{todo:'待整改',doing:'整改中',check:'待复查',done:'已闭环'}[h.status]}</span>
+      </div>
+    </section>
+
+    ${h.citation ? `
+    <div class="jtabs">
+      <button class="on" data-pane="mine">本条引用</button>
+      <button data-pane="gb">🇨🇳 GB 对照</button>
+      <button data-pane="osha">🇺🇸 OSHA</button>
+      <button data-pane="iso">🌐 ISO</button>
+    </div>
+    <div class="jpane on" id="pane-mine">
+      <section class="card cite-card">
+        <div class="cite" ${h.source==='manual'?'':'style="border-left-color:var(--amber)"'}>
+          <span class="std">${h.source==='manual'?'GB':'AI'}</span><b>${esc(h.citation.std)}${h.citation.clause?' §'+esc(h.citation.clause):''}</b>
+          ${h.citation.text?`<q>${esc(h.citation.text)}</q>`:''}
+          ${h.source==='manual'?'<div style="margin-top:6px;font-size:11.5px">来自平台条文库，已核验</div>':'<div style="margin-top:6px;font-size:11.5px">⚠ AI 生成引用，请核对官方文本</div>'}
+        </div>
+        ${h.citation.id ? `<button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="favToggle('${h.citation.id}')">⭐ ${DB.citations().includes(h.citation.id)?'已在引用夹':'加入引用夹'}</button>` : ''}
+      </section>
+    </div>` : ''}
+
+    <div class="jpane" id="pane-gb">
+      ${refGb.length ? refGb.map(c=>citeCard(c,'GB')).join('') : '<p style="font-size:12.5px;color:var(--ink-soft);padding:8px 2px">未自动匹配到 GB 对照条文，可到标准查询手动检索。</p>'}
+    </div>
+    <div class="jpane" id="pane-osha">
+      ${refOsha.length ? refOsha.map(c=>citeCard(c,'OSHA')).join('') : '<p style="font-size:12.5px;color:var(--ink-soft);padding:8px 2px">未自动匹配到 OSHA 对照条文。</p>'}
+    </div>
+    <div class="jpane" id="pane-iso">
+      ${refIso.map(c=>citeCard(c,'ISO')).join('')}
+    </div>
+
+    <div class="sec-head"><h2>整改建议</h2></div>
+    <section class="card">
+      <p style="font-size:13.5px;color:var(--ink-soft)">${esc(h.fix) || '暂无建议（可在下方指派时补充要求）'}</p>
+    </section>
+
+    <div class="sec-head"><h2>处理流转</h2></div>
+    <section class="card">
+      <div class="field">
+        <label>责任人</label>
+        <input id="owner" value="${esc(h.owner||'')}" placeholder="输入责任人姓名">
+      </div>
+      <div class="field">
+        <label>整改期限</label>
+        <input type="date" id="ddl" value="${h.ddl || ''}">
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px">
+        <button class="btn btn-sm ${h.status==='todo'?'btn-primary':'btn-ghost'}" onclick="setSt('todo','确认为待整改')">待整改</button>
+        <button class="btn btn-sm ${h.status==='doing'?'btn-primary':'btn-ghost'}" onclick="setSt('doing','转入整改中')">整改中</button>
+        <button class="btn btn-sm ${h.status==='check'?'btn-primary':'btn-ghost'}" onclick="setSt('check','转入待复查')">待复查</button>
+        <button class="btn btn-sm ${h.status==='done'?'btn-green':'btn-ghost'}" onclick="setSt('done','已复查销项，闭环归档')">销项闭环</button>
+      </div>
+      <div class="timeline" style="margin-top:4px">
+        ${(h.timeline||[]).map(e=>`<div class="tl done"><span class="pt"></span>${fmt(e.t)} ${esc(e.txt)}</div>`).join('')}
+      </div>
+    </section>
+
+    <p class="foot-note">状态流转与时间线实时保存在本机浏览器</p>`;
+
+  document.querySelectorAll('.jtabs button').forEach(b=>{
+    if(!b.dataset.pane) return;
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.jtabs button').forEach(x=>x.classList.remove('on'));
+      document.querySelectorAll('.jpane').forEach(p=>p.classList.remove('on'));
+      b.classList.add('on');
+      document.getElementById('pane-'+b.dataset.pane).classList.add('on');
+    });
+  });
+}
+
+function citeCard(c, tag){
+  const inFav = DB.citations().includes(c.id);
+  return `<section class="card cite-card">
+    <div class="cite">
+      <span class="std" style="${c.sys==='OSHA'?'background:#8a4b08':c.sys==='ISO'?'background:#0ea36b':''}">${tag}</span>
+      <b>${esc(c.code)}${c.clause?' §'+esc(c.clause):''}</b> <span class="ver">${esc(c.title)}</span>
+      <q>${esc(c.text)}</q>
+      <div style="margin-top:6px;font-size:11.5px">↔ ${esc(c.xref)}</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="favToggle('${c.id}')">⭐ ${inFav?'已在引用夹':'加入引用夹'}</button>
+  </section>`;
+}
+
+function favToggle(cid){
+  const added = DB.toggleCitation(cid);
+  toast(added ? '已加入引用夹' : '已从引用夹移除');
+  setTimeout(()=>location.reload(), 700);
+}
+
+function setSt(st, txt){
+  if(!h) return;
+  h.status = st;
+  const owner = document.getElementById('owner').value.trim();
+  const ddl = document.getElementById('ddl').value;
+  if(owner){ h.owner = owner; }
+  if(ddl){ h.ddl = ddl; }
+  DB.saveHazard(h);
+  addEvent(h, txt + (owner ? ' · ' + owner : ''));
+  toast(txt);
+  setTimeout(()=>location.reload(), 700);
+}
+
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</div>
+</body>
+</html>

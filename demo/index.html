@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拍照识隐患 · 真实 API Demo · EHS-AI</title>
+<style>
+  body{max-width:860px;margin:0 auto;padding:28px 20px 60px;background:#f4f7fd}
+  .demo-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .demo-head h1{font-size:21px;color:#0b2a5b}
+  .note{font-size:12.5px;color:#5a6478;margin-bottom:18px;line-height:1.7}
+  .panel{background:#fff;border:1px solid #e3e8f2;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 4px 18px rgba(20,73,176,.05)}
+  .panel h2{font-size:15px;margin-bottom:12px;color:#1449b0}
+  label{display:block;font-size:12.5px;font-weight:700;margin:10px 0 5px}
+  input[type=text],input[type=password],select,textarea{
+    width:100%;border:1px solid #e3e8f2;border-radius:10px;padding:10px 12px;
+    font-size:13.5px;font-family:inherit;box-sizing:border-box;
+  }
+  textarea{min-height:88px;resize:vertical;line-height:1.6}
+  .row{display:flex;gap:12px}
+  .row>div{flex:1}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;cursor:pointer;
+    border-radius:11px;padding:12px 22px;font-size:14px;font-weight:700;
+  }
+  .btn-primary{background:linear-gradient(135deg,#1e5eff,#1449b0);color:#fff}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .upload{
+    border:2px dashed #c9d6f2;border-radius:14px;padding:26px;text-align:center;
+    color:#5a6478;font-size:13.5px;cursor:pointer;transition:.2s;
+  }
+  .upload:hover{border-color:#1e5eff;background:#f4f8ff}
+  .upload img{max-width:100%;max-height:340px;border-radius:10px;display:block;margin:0 auto}
+  .hz{border:1px solid #e3e8f2;border-radius:14px;padding:16px;margin-bottom:12px;background:#fff}
+  .hz .t{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px}
+  .hz .t h3{font-size:14.5px;flex:1;min-width:180px}
+  .badge{font-size:11px;font-weight:800;padding:2.5px 10px;border-radius:999px}
+  .b-high{background:#fdeaea;color:#e5484d}
+  .b-medium{background:#fff2e8;color:#ff7a1a}
+  .b-low{background:#e6f7f0;color:#0ea36b}
+  .b-review{background:#fdf3e0;color:#c77f00}
+  .cite{border-left:3px solid #1e5eff;background:#f4f8ff;border-radius:0 10px 10px 0;padding:10px 12px;font-size:12.5px;color:#5a6478;margin:9px 0}
+  .cite b{color:#1449b0}
+  .fix{font-size:13px;color:#5a6478}
+  .fix b{color:#0ea36b}
+  .raw{background:#0d1f42;color:#c9d8ff;border-radius:12px;padding:14px;font-size:11.5px;white-space:pre-wrap;word-break:break-all;font-family:Consolas,monospace;max-height:260px;overflow:auto}
+  #status{font-size:13px;margin-top:10px}
+  .ok{color:#0ea36b}.err{color:#e5484d}
+  .spinner{display:inline-block;width:14px;height:14px;border:2.5px solid #c9d6f2;border-top-color:#1e5eff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:7px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .warn-box{background:#fff8ec;border:1px solid #ffe1ad;border-radius:12px;padding:12px 14px;font-size:12.5px;color:#8a5a00;margin-bottom:16px;line-height:1.7}
+</style>
+<script src="../analytics-config.js"></script>
+<script src="../prototype/tracker.js"></script>
+</head>
+<body>
+
+<div class="demo-head"><h1>🔬 拍照识隐患 · 真实 API Demo</h1></div>
+<p class="note">
+  上传一张现场照片，调用多模态大模型（视觉）识别安全隐患，输出结构化隐患清单（含建议引用的标准条文与置信度）。<br>
+  <b>BYOK 模式</b>：使用你自己的 API Key，仅保存在本机浏览器（localStorage），通过本地代理转发，不经任何第三方服务器。
+</p>
+
+<div class="warn-box" id="fileWarn" style="display:none">
+  ⚠ 检测到你正以文件方式直接打开。请先运行本地代理再使用：<br>
+  <code>cd demo && python server.py</code> → 浏览器打开 <code>http://localhost:8643</code>（否则请求会因跨域失败）
+</div>
+
+<!-- ① 配置 -->
+<section class="panel">
+  <h2>① API 配置</h2>
+  <label>API Key（智谱 open.bigmodel.cn，或兼容 OpenAI 格式的服务）</label>
+  <input type="password" id="apiKey" placeholder="粘贴你的 API Key（仅存本机浏览器）">
+  <div class="row">
+    <div>
+      <label>模型</label>
+      <select id="model">
+        <option value="glm-4v-flash">glm-4v-flash（免费，推荐体验）</option>
+        <option value="glm-4v-plus">glm-4v-plus</option>
+        <option value="glm-4.5v">glm-4.5v</option>
+      </select>
+    </div>
+    <div>
+      <label>法域 / 引用偏好</label>
+      <select id="juris">
+        <option value="中国 GB / JGJ / TSG 体系，辅以 OSHA 对照">中国 GB 体系</option>
+        <option value="美国 OSHA 29 CFR 体系，辅以 GB 对照">美国 OSHA 体系</option>
+        <option value="ISO 45001 为主，辅以当地法规">ISO 45001 国际</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<!-- ② 上传照片 -->
+<section class="panel">
+  <h2>② 现场照片</h2>
+  <div class="upload" id="dropZone">
+    <span id="dropHint">📷 点击选择图片，或将照片拖到这里<br><span style="font-size:11.5px">施工现场 / 车间 / 仓库照片效果最佳；图片仅发送给你配置的模型服务</span></span>
+    <img id="preview" style="display:none" alt="preview">
+  </div>
+  <input type="file" id="fileInput" accept="image/*" style="display:none">
+</section>
+
+<!-- ③ 运行 -->
+<section class="panel">
+  <h2>③ 识别</h2>
+  <button class="btn btn-primary" id="runBtn" disabled>🚀 开始识别</button>
+  <div id="status"></div>
+</section>
+
+<!-- ④ 结果 -->
+<section id="resultPanel" style="display:none">
+  <section class="panel">
+    <h2>④ 识别结果</h2>
+    <div id="hzList"></div>
+    <p style="font-size:11.5px;color:#9aa5b8;margin-top:6px">
+      ⚠ 模型生成的条文引用可能存在误差（正式产品中该步骤由结构化法规库检索完成，而非模型生成）。复核前请勿直接作为执法/整改依据。
+    </p>
+  </section>
+  <section class="panel">
+    <h2>模型原始返回（调试用）</h2>
+    <div class="raw" id="rawOut"></div>
+  </section>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+
+// file:// 检测
+if(location.protocol === 'file:') $('fileWarn').style.display = '';
+
+// key 持久化
+$('apiKey').value = localStorage.getItem('ehs_key') || '';
+$('apiKey').addEventListener('change', e => localStorage.setItem('ehs_key', e.target.value.trim()));
+
+// 上传
+let imgData = null; // {base64, mime}
+const dz = $('dropZone'), fi = $('fileInput');
+dz.addEventListener('click', ()=>fi.click());
+fi.addEventListener('change', ()=>{ if(fi.files[0]) loadFile(fi.files[0]); });
+dz.addEventListener('dragover', e=>{e.preventDefault(); dz.style.borderColor='#1e5eff';});
+dz.addEventListener('dragleave', ()=>dz.style.borderColor='');
+dz.addEventListener('drop', e=>{
+  e.preventDefault(); dz.style.borderColor='';
+  const f = e.dataTransfer.files[0];
+  if(f && f.type.startsWith('image/')) loadFile(f);
+});
+function loadFile(f){
+  if(f.size > 8*1024*1024){ setStatus('图片超过 8MB，请压缩后重试', true); return; }
+  const r = new FileReader();
+  r.onload = ()=>{
+    imgData = { base64: r.result.split(',')[1], mime: f.type };
+    $('preview').src = r.result; $('preview').style.display = '';
+    $('dropHint').style.display = 'none';
+    $('runBtn').disabled = false;
+    setStatus('照片已就绪：' + f.name + '（' + Math.round(f.size/1024) + ' KB）');
+  };
+  r.readAsDataURL(f);
+}
+
+function setStatus(msg, isErr){
+  $('status').innerHTML = '';
+  const s = document.createElement('div');
+  s.textContent = msg;
+  s.className = isErr ? 'err' : 'ok';
+  $('status').appendChild(s);
+}
+function setBusy(busy, msg){
+  $('runBtn').disabled = busy || !imgData;
+  if(busy){
+    $('status').innerHTML = '<span class="spinner"></span><span style="color:#1449b0">' + msg + '</span>';
+  }
+}
+
+const SYSTEM_PROMPT = () => `你是一名资深 EHS（环境健康安全）检查专家。用户给出一张现场照片，请识别其中可确认的安全隐患，并严格按以下 JSON 数组格式输出（不要输出任何其他文字、不要使用 markdown 代码块）：
+[{
+  "hazard": "隐患描述（中文，具体到部位与问题）",
+  "risk": "high | medium | low | review",
+  "confidence": 0-100 的整数,
+  "citation_standard": "建议引用的标准号（如 JGJ 80-2016 / GB 6095-2021 / OSHA 29 CFR 1926.501(b)(1)，不确定则填 null 并将 citation_confidence 设为 low）",
+  "citation_text": "标准条文的关键内容（简短摘述，不得编造原文）",
+  "fix": "整改建议（一句话，可执行）"
+}]
+要求：1) 只列出照片中真实可见、可确认的隐患，宁缺毋滥；2) 若照片与施工现场无关或看不出隐患，返回 []；3) 置信度低于 70 时 risk 用 review；4) 引用偏好：${$('juris').value}；5) 输出必须是合法 JSON。`;
+
+// 识别
+$('runBtn').addEventListener('click', async ()=>{
+  if(!$('apiKey').value.trim()){ setStatus('请先填写 API Key', true); return; }
+  if(!imgData){ setStatus('请先上传照片', true); return; }
+  $('resultPanel').style.display = 'none';
+
+  // 本地环境（localhost/局域网IP）走代理；公网托管直连 API
+  const IS_LOCAL = /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(location.hostname);
+  const useProxy = IS_LOCAL;
+  const body = {
+    model: $('model').value,
+    messages: [
+      { role:'system', content: SYSTEM_PROMPT() },
+      { role:'user', content: [
+        { type:'image_url', image_url: { url: 'data:' + imgData.mime + ';base64,' + imgData.base64 } },
+        { type:'text', text: '请识别这张照片中的安全隐患，按约定 JSON 格式输出。' }
+      ]}
+    ],
+    temperature: 0.1
+  };
+  const headers = { 'Content-Type':'application/json' };
+  let url = API_URL;
+  if(useProxy){
+    url = '/api/analyze';
+    headers['X-Api-Key'] = $('apiKey').value.trim();
+  } else {
+    headers['Authorization'] = 'Bearer ' + $('apiKey').value.trim(); // 公网直连
+  }
+
+  setBusy(true, '模型识别中，通常需要 5–20 秒…');
+  const t0 = Date.now();
+  try{
+    const resp = await fetch(url, { method:'POST', headers, body: JSON.stringify(body) });
+    const data = await resp.json();
+    if(!resp.ok){
+      throw new Error('HTTP ' + resp.status + '：' + (data.error?.message || JSON.stringify(data).slice(0,300)));
+    }
+    const text = data.choices?.[0]?.message?.content || '';
+    $('rawOut').textContent = text;
+    const hazards = parseHazards(text);
+    renderHazards(hazards);
+    $('resultPanel').style.display = '';
+    setStatus('识别完成：' + hazards.length + ' 项隐患 · 耗时 ' + ((Date.now()-t0)/1000).toFixed(1) + 's · 模型 ' + $('model').value);
+  }catch(err){
+    setStatus('识别失败：' + err.message + (useProxy ? '' : '（直连可能被 CORS 拦截，请运行 demo/server.py 后经 http://localhost:8643 访问）'), true);
+  }
+});
+
+function parseHazards(text){
+  try{
+    // 剥离可能的 markdown 代码块
+    const m = text.match(/\[[\s\S]*\]/);
+    if(!m) return [];
+    return JSON.parse(m[0]);
+  }catch(e){ return []; }
+}
+
+function renderHazards(list){
+  const box = $('hzList');
+  if(!list.length){
+    box.innerHTML = '<p style="font-size:13.5px;color:#5a6478">模型未识别出可确认的隐患（或返回格式异常，请查看原始输出）。</p>';
+    return;
+  }
+  const label = { high:'高风险', medium:'中风险', low:'低风险', review:'待人工复核' };
+  box.innerHTML = list.map((h,i)=>`
+    <div class="hz">
+      <div class="t">
+        <span style="font-weight:800;color:#1a2233">${i+1}.</span>
+        <h3>${esc(h.hazard)}</h3>
+        <span class="badge b-${esc(h.risk||'review')}">${label[h.risk]||h.risk||'—'}</span>
+        <span style="font-size:11.5px;color:#5a6478">置信度 <b style="color:${(h.confidence||0)>=70?'#0ea36b':'#c77f00'}">${h.confidence??'—'}%</b></span>
+      </div>
+      ${h.citation_standard ? `<div class="cite"><b>${esc(h.citation_standard)}</b>${h.citation_text?'<br>'+esc(h.citation_text):''}</div>` : '<div class="cite">⚠ 模型未给出可靠条文引用（正确行为：不确定时不编造）</div>'}
+      <div class="fix"><b>整改建议：</b>${esc(h.fix||'—')}</div>
+    </div>`).join('');
+}
+
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</body>
+</html>

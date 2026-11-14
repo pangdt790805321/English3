@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hazard Detail · Cross-refs · SafeLens AI</title>
+<link rel="stylesheet" href="../app.css">
+<script src="../../analytics-config.js"></script>
+<script src="../tracker.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <a class="back" href="result.html">‹</a>
+    <h1>Hazard Detail</h1>
+    <span class="pack">Cross-jurisdiction</span>
+  </header>
+
+  <main class="page">
+
+    <!-- Photo highlight -->
+    <div class="scene">
+      <div class="grid-overlay"></div>
+      <span class="prop" style="left:14%;top:12%">🏗️</span>
+      <span class="prop" style="left:58%;top:30%">👷</span>
+      <div class="dbox red" style="right:8%;top:8%;width:44%;height:40%"><span class="tag">① Current hazard</span></div>
+    </div>
+
+    <!-- Title block -->
+    <section class="card" style="margin-top:14px">
+      <h2 style="font-size:17px;line-height:1.45">No guardrail at unprotected open edge</h2>
+      <div class="hz-meta" style="margin:9px 0 0">
+        <span class="risk high">HIGH</span>
+        <span class="conf">Confidence <b>96%</b></span>
+        <span style="font-size:11.5px;color:var(--ink-soft)">Detected 2026-11-12 09:41 · J. Zhang</span>
+      </div>
+    </section>
+
+    <!-- Jurisdiction tabs: OSHA first (US pack) -->
+    <div class="jtabs" id="jtabs">
+      <button class="on" data-pane="osha">🇺🇸 OSHA</button>
+      <button data-pane="gb">🇨🇳 GB / JGJ</button>
+      <button data-pane="iso">🌐 ISO 45001</button>
+    </div>
+
+    <!-- OSHA -->
+    <div class="jpane on" id="pane-osha">
+      <section class="card cite-card">
+        <div class="cite">
+          <span class="std" style="background:#8a4b08">OSHA</span><b>29 CFR 1926.501(b)(1) — Unprotected sides and edges</b><span class="ver">US · public domain full text</span>
+          <q>"Each employee on a walking/working surface (horizontal and vertical surface) with an unprotected side or edge which is 6 feet (1.8 m) or more above a lower level shall be protected from falling by the use of guardrail systems, safety net systems, or personal fall arrest systems."</q>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="toast('Demo: open official text on osha.gov')">Official text</button>
+          <button class="btn btn-ghost btn-sm" onclick="toast('Added to citation folder')">⭐ Citation folder</button>
+        </div>
+      </section>
+      <section class="card cite-card">
+        <div class="cite">
+          <span class="std" style="background:#8a4b08">OSHA</span><b>29 CFR 1926.502(b) — Guardrail systems criteria</b>
+          <q>"Top edge height of top rails… shall be 42 inches (1.1 m) plus or minus 3 inches… Midrails shall be installed…"</q>
+        </div>
+      </section>
+    </div>
+
+    <!-- GB -->
+    <div class="jpane" id="pane-gb">
+      <section class="card cite-card">
+        <div class="cite">
+          <span class="std">GB</span><b>JGJ 80-2016 Technical Standard for Construction Safety at Height — §4.1.1</b><span class="ver">China · current · 2016 edition</span>
+          <q>Guardrails for edge work shall consist of rails, posts and a toe board not lower than 180 mm; overall height not less than 1.2 m… (reference translation)</q>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="toast('Demo: view original text via official channel')">View original</button>
+        </div>
+      </section>
+      <section class="card cite-card">
+        <div class="cite">
+          <span class="std">GB</span><b>JGJ 59-2011 Standard of Construction Safety Inspection</b>
+          <q>Edge protection is a scored inspection item; a missing guardrail shall be rated as non-conforming… (reference translation)</q>
+        </div>
+      </section>
+    </div>
+
+    <!-- ISO -->
+    <div class="jpane" id="pane-iso">
+      <section class="card cite-card">
+        <div class="cite">
+          <span class="std" style="background:#0ea36b">ISO</span><b>ISO 45001:2018 §8.1.2 — Eliminating hazards and reducing OH&S risks</b><span class="ver">Copyrighted · excerpt only</span>
+          <q>The organization shall implement hazard elimination and OH&S risk reduction through the hierarchy of controls, giving priority to eliminating the hazard…</q>
+          <div style="margin-top:6px;font-size:11.5px">Full text available via official ISO channels only</div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="toast('Demo: open ISO official purchase page')">Buy from ISO</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Rectification advice -->
+    <div class="sec-head"><h2>Rectification Advice</h2></div>
+    <section class="card">
+      <p style="font-size:13.5px;color:var(--ink-soft)">
+        <b style="color:var(--ink)">Immediate:</b>stop edge work; establish an exclusion zone.<br>
+        <b style="color:var(--ink)">Engineering:</b>install guardrail system (top rail 42 in ± 3 in, midrail, toe board) per 1926.502(b).<br>
+        <b style="color:var(--ink)">Administrative:</b>document the toolbox talk; safety officer verifies before work resumes.
+      </p>
+    </section>
+
+    <!-- Assignment -->
+    <div class="sec-head"><h2>Assign Rectification</h2><span class="pro-tag">Syncs to log</span></div>
+    <section class="card">
+      <div class="field">
+        <label>Owner</label>
+        <select id="owner">
+          <option>J. Carter · Safety officer</option>
+          <option>M. Wang · Crew 2</option>
+          <option>R. Miller · Electrical</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Deadline</label>
+        <input type="date" id="ddl" value="2026-11-13">
+      </div>
+      <div class="field">
+        <label>Note</label>
+        <textarea placeholder="Additional requirements… (optional)">High-risk hazard: complete today and reply with photos.</textarea>
+      </div>
+      <button class="btn btn-green btn-block" onclick="assign()">✔ Assign & sync to hazard log</button>
+    </section>
+
+    <p class="foot-note">* Prototype demo data · clause excerpts per official published text</p>
+  </main>
+
+  <div class="action-bar">
+    <a class="btn btn-ghost" href="result.html">‹ Back to results</a>
+    <a class="btn btn-primary" href="report.html">Generate report →</a>
+  </div>
+
+<script>
+  document.querySelectorAll('#jtabs button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('#jtabs button').forEach(x=>x.classList.remove('on'));
+      document.querySelectorAll('.jpane').forEach(p=>p.classList.remove('on'));
+      b.classList.add('on');
+      document.getElementById('pane-'+b.dataset.pane).classList.add('on');
+    });
+  });
+
+  function assign(){
+    const owner = document.getElementById('owner').value.split(' ')[0] + ' ' + document.getElementById('owner').value.split(' ')[1].replace('·','').trim();
+    const ddl = document.getElementById('ddl').value.slice(5);
+    toast('Assigned ' + owner + ' · due ' + ddl + ' — synced to log');
+  }
+
+  function toast(msg){
+    let t = document.querySelector('.toast');
+    if(!t){ t = document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 3000);
+  }
+</script>
+</div>
+</body>
+</html>

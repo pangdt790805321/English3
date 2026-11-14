@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安全专家修炼库 · EHS-AI</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  .lib-intro{
+    background:linear-gradient(135deg,#0b2a5b,#1449b0);border-radius:18px;padding:22px 20px;color:#fff;
+    box-shadow:0 12px 30px rgba(11,42,91,.3);
+  }
+  .lib-intro h2{font-size:20px}
+  .lib-intro p{font-size:12.5px;color:#c9d8ff;margin:7px 0 13px;line-height:1.7}
+  .dims{display:flex;gap:5px;flex-wrap:wrap}
+  .dim{
+    font-size:10.5px;font-weight:700;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);
+    border-radius:8px;padding:3px 8px;color:#dce6ff;
+  }
+  .prog-card{margin-top:14px}
+  .prog-bar{height:9px;background:var(--blue-50);border-radius:999px;overflow:hidden;margin-top:9px}
+  .prog-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue-600),var(--green));border-radius:999px;transition:.3s}
+  .prog-txt{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-soft);margin-top:6px}
+  .topic-card{margin-bottom:12px}
+  .t-head{display:flex;align-items:flex-start;gap:10px}
+  .t-code{
+    flex:none;font-size:11px;font-weight:800;color:var(--blue-700);background:var(--blue-50);
+    border:1px solid var(--blue-100);border-radius:8px;padding:3px 7px;margin-top:2px;
+  }
+  .t-head h3{font-size:15px;font-weight:800;flex:1}
+  .thesis{
+    font-size:12.5px;color:var(--ink-soft);margin:8px 0 0;line-height:1.7;
+    border-left:3px solid var(--blue-100);padding-left:10px;
+  }
+  .t-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:#9aa5b8;margin-top:9px}
+  .t-actions{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}
+  .status-btn{
+    border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 13px;
+    font-size:12px;font-weight:700;color:var(--ink-soft);cursor:pointer;
+  }
+  .status-btn.doing{border-color:var(--orange);color:var(--orange);background:var(--orange-bg)}
+  .status-btn.done{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+  .dl-card{display:flex;align-items:center;gap:12px;padding:12px 2px;cursor:pointer}
+  .dl-card .di{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:19px;background:var(--blue-50)}
+  .nums details{margin-bottom:9px;border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:#fff}
+  .nums summary{font-size:13px;font-weight:700;cursor:pointer;list-style:none;display:flex;gap:8px;align-items:baseline}
+  .nums summary::before{content:'▸';color:var(--blue-600);font-size:11px}
+  .nums details[open] summary::before{content:'▾'}
+  .nums .ref{font-size:12px;color:var(--ink-soft);margin-top:7px;line-height:1.7}
+  .nums .ref b{color:var(--red)}
+</style>
+<script src="../analytics-config.js"></script>
+<script src="tracker.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <a class="back" href="home.html">‹</a>
+    <h1>安全专家修炼库</h1>
+    <span class="pack">12 册 · 18 个月</span>
+  </header>
+
+  <main class="page">
+
+    <!-- 总纲卡 -->
+    <section class="lib-intro">
+      <h2>📚 安全专家修炼库</h2>
+      <p>12 册技术手册 + 12 张 A4 检查表 + 18 个月修炼路线。<br>目标不是"读过"，是<b style="color:#fff">能在方案评审会上把数字说出来</b>。</p>
+      <div class="dims">
+        <span class="dim">A 规范标准</span><span class="dim">B 技术原理</span><span class="dim">C 危险辨识</span>
+        <span class="dim">D 控制措施</span><span class="dim">E 检查验证</span><span class="dim">F 案例复盘</span><span class="dim">G 输出转训</span>
+      </div>
+    </section>
+
+    <!-- 进度 -->
+    <section class="card prog-card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <b style="font-size:14px">我的修炼进度</b>
+        <span style="font-size:11px;color:var(--ink-soft)">七维打勾才算关闭</span>
+      </div>
+      <div class="prog-bar"><i id="progBar"></i></div>
+      <div class="prog-txt">
+        <span id="progTxt">0 / 12 专题完成</span>
+        <span>主线不能跳：T01 → T12</span>
+      </div>
+    </section>
+
+    <!-- 总纲下载 -->
+    <div class="sec-head"><h2>总纲</h2></div>
+    <section class="card" style="padding:4px 14px">
+      <a class="dl-card" href="../library/安全专家修炼库/00_总纲/00_总规划_18个月.md.docx" target="_blank" download>
+        <span class="di">🗺️</span>
+        <div style="flex:1"><b style="font-size:13.5px">18 个月总规划</b><br><span style="font-size:11.5px;color:var(--ink-soft)">22 专题排期 · 修炼主线</span></div>
+        <span style="color:var(--ink-soft)">›</span>
+      </a>
+      <a class="dl-card" href="../library/安全专家修炼库/00_总纲/学习进度跟踪台账.xlsx" style="border-top:1px solid var(--line)" target="_blank" download>
+        <span class="di">📊</span>
+        <div style="flex:1"><b style="font-size:13.5px">学习进度跟踪台账</b><br><span style="font-size:11.5px;color:var(--ink-soft)">Excel · 七维打勾跟踪</span></div>
+        <span style="color:var(--ink-soft)">›</span>
+      </a>
+    </section>
+
+    <!-- 核心专题 -->
+    <div class="sec-head"><h2>核心专题 · 致命风险</h2><span style="font-size:11.5px;color:var(--ink-soft)">T01–T06 按序学</span></div>
+    <div id="grp-core"></div>
+
+    <!-- 扩展专题 -->
+    <div class="sec-head"><h2>扩展专题</h2><span style="font-size:11.5px;color:var(--ink-soft)">T07–T11</span></div>
+    <div id="grp-extension"></div>
+
+    <!-- 体系整合 -->
+    <div class="sec-head"><h2>体系整合</h2><span style="font-size:11.5px;color:var(--ink-soft)">T12 装配图</span></div>
+    <div id="grp-system"></div>
+
+    <!-- 十二条必背数字 -->
+    <div class="sec-head"><h2>十二条必背数字</h2><span style="font-size:11.5px;color:var(--ink-soft)">点击展开</span></div>
+    <section class="nums" id="nums"></section>
+
+    <p class="foot-note">
+      内容来源：安全专家修炼库 v1.0（2026-11-12）· 七维学习法 A→G<br>
+      手册标注的是"逻辑与量级"，引用前请核对现行版本标准年代号 · 海外项目三者取严
+    </p>
+  </main>
+
+  <!-- 底部导航 -->
+  <nav class="tabbar">
+    <a href="home.html"><span class="ico">🏠</span>工作台</a>
+    <a href="log.html"><span class="ico">🔁</span>隐患台账</a>
+    <a href="search.html"><span class="ico">📖</span>标准</a>
+    <a class="on" href="academy.html"><span class="ico">📚</span>修炼库</a>
+  </nav>
+
+<script>
+const LIB = '../library/安全专家修炼库/';
+const TOPICS = [
+  { id:'T01', grp:'core', title:'起重吊装', tables:26, paras:134, thesis:'吊装事故几乎都始于一个没人复核的数字：不是钢丝绳断了，是算的时候就错了。', path:'01_核心专题/T01_起重吊装' },
+  { id:'T02', grp:'core', title:'高处作业与坠落防护', tables:28, paras:161, thesis:'系了安全带不等于安全：净空不足时，人停下来的时候已经撞在平台上了。', path:'01_核心专题/T02_高处作业与坠落防护' },
+  { id:'T03', grp:'core', title:'脚手架（含盘扣专项）', tables:31, paras:198, thesis:'盘扣的强度来自体系不是零件：少一根斜杆，相邻杆件的计算前提就崩了。', path:'01_核心专题/T03_脚手架' },
+  { id:'T04', grp:'core', title:'临时用电', tables:41, paras:238, thesis:'让看不见的电流变成能算的数字——220V 干燥手到手约 179mA，是心颤阈的三倍多。', path:'01_核心专题/T04_临时用电' },
+  { id:'T05', grp:'core', title:'动火作业', tables:43, paras:197, thesis:'「10% LEL 以下就安全」是错的：同一读数对甲烷合格、对乙醇不合格。', path:'01_核心专题/T05_动火作业' },
+  { id:'T06', grp:'core', title:'受限空间作业', tables:49, paras:206, thesis:'受限空间里死的人，大多数不是进去干活的那个，是进去救他的那个。', path:'01_核心专题/T06_受限空间作业' },
+  { id:'T07', grp:'extension', title:'土方开挖与运输车辆', tables:42, paras:173, thesis:'土方坍塌没有任何装备能救你：一立方米土约 1.8 吨，主要死因是窒息。', path:'02_扩展专题/T07_土方开挖与运输车辆' },
+  { id:'T08', grp:'extension', title:'危险化学品与消防', tables:44, paras:178, thesis:'一只 20L 桶的稀料全部蒸发，浓度正好落在爆炸区间的正中间。', path:'02_扩展专题/T08_危险化学品与消防' },
+  { id:'T09', grp:'extension', title:'职业健康', tables:53, paras:281, thesis:'职业健康没有事故信号：唯一能替代「事故反馈」的是检测与体检。', path:'02_扩展专题/T09_职业健康' },
+  { id:'T10', grp:'extension', title:'机械设备与工具', tables:47, paras:268, thesis:'机械伤害不需要「出事」，只需要「接触」——只能靠距离和屏障。', path:'02_扩展专题/T10_机械设备与工具' },
+  { id:'T11', grp:'extension', title:'安保与危机管理', tables:53, paras:268, thesis:'照着标准做完，可能只是把风险推到了你没做标准的地方。', path:'02_扩展专题/T11_安保与危机管理' },
+  { id:'T12', grp:'system', title:'体系横向打通', tables:48, paras:332, thesis:'单点做对的地方体系往往也对；体系垮掉的地方，几乎总是在连接处。', path:'03_体系整合/T12_体系横向打通' },
+];
+const NUMS = [
+  ['FF=1 + 2m 系绳 → 下方需净空约 6 m','"我系了安全带"'],
+  ['吊索夹角 120° → 受力 2 倍','"两根绳比一根绳稳"'],
+  ['吊点落在吊臂反侧 → 起重量可能只剩一半','"表上写着 50 吨"'],
+  ['单根 2.5m 接地极 33.7Ω，要 6 根才够 10Ω','"接地做了"'],
+  ['30 串 45V 组件 0℃ → 1451V','"组件才 45 伏，不电人"'],
+  ['100m³ 房间汽油爆炸区间 7.5–40L','"就一小桶"'],
+  ['50m³ / 500ppm H₂S 降到 10ppm 需 47min','"吹几分钟就行了"'],
+  ['坑边 2m 土堆 → 支护荷载 2.66 倍','"土先堆边上，回头再清"'],
+  ['12m/s² 破碎锤一天只能用 83 分钟','"干惯了没事"'],
+  ['地面提 20kg LI = 4.18','"教他正确姿势就行"'],
+  ['延迟—响应差 −300s 时，加摄像机仍是 −210s','"装了监控就安全了"'],
+  ['抽 10 份全合格 → 真实不合格率仍可能 30%','"抽查过了，符合"'],
+];
+const STATUS = ['未开始','学习中','已完成'];
+const enc = p => LIB + p.split('/').map(encodeURIComponent).join('/');
+
+// 状态存取
+const store = {
+  get(){ try{ return JSON.parse(localStorage.getItem('academy_status')||'{}'); }catch(e){ return {}; } },
+  set(o){ localStorage.setItem('academy_status', JSON.stringify(o)); }
+};
+
+function card(t){
+  const st = store.get()[t.id] || 0;
+  return `
+  <section class="card topic-card" data-id="${t.id}">
+    <div class="t-head">
+      <span class="t-code">${t.id}</span>
+      <h3>${t.title}</h3>
+    </div>
+    <p class="thesis">${t.thesis}</p>
+    <div class="t-meta">
+      <span>📖 ${t.tables} 表 / ${t.paras} 段</span><span>⏱ 6 周</span><span>📋 A4 双面检查表（中英双语）</span>
+    </div>
+    <div class="t-actions">
+      <button class="status-btn ${st===1?'doing':st===2?'done':''}" onclick="cycle(this,'${t.id}')">${STATUS[st]}</button>
+      <a class="btn btn-primary btn-sm" href="${enc(t.path)}/${encodeURIComponent('手册.docx')}" target="_blank" download>📖 学习手册 ⬇</a>
+      <a class="btn btn-ghost btn-sm" href="${enc(t.path)}/${encodeURIComponent('检查表_A4双面.docx')}" target="_blank" download>📋 检查表 ⬇</a>
+    </div>
+  </section>`;
+}
+
+function render(){
+  ['core','extension','system'].forEach(g=>{
+    document.getElementById('grp-'+g).innerHTML = TOPICS.filter(t=>t.grp===g).map(card).join('');
+  });
+  updateProgress();
+}
+
+function cycle(btn, id){
+  const s = store.get();
+  s[id] = ((s[id]||0) + 1) % 3;
+  store.set(s);
+  render();
+  if(s[id]===2) toast(TOPICS.find(t=>t.id===id).title + ' 已标记完成 🎉');
+}
+
+function updateProgress(){
+  const s = store.get();
+  const done = Object.values(s).filter(v=>v===2).length;
+  document.getElementById('progBar').style.width = (done/12*100) + '%';
+  document.getElementById('progTxt').textContent = done + ' / 12 专题完成';
+}
+
+// 必背数字
+document.getElementById('nums').innerHTML = NUMS.map((n,i)=>`
+  <details ${i===0?'open':''}>
+    <summary>${i+1}. ${n[0]}</summary>
+    <div class="ref">用来反驳：<b>"${n[1]}"</b></div>
+  </details>`).join('');
+
+render();
+
+function toast(msg){
+  let t = document.querySelector('.toast');
+  if(!t){ t = document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+</script>
+</div>
+</body>
+</html>

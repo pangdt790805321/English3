@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>标准查询 · EHS-AI</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  .search-box{
+    display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid var(--blue-100);
+    border-radius:14px;padding:11px 14px;box-shadow:0 4px 14px rgba(20,73,176,.06);
+  }
+  .search-box input{
+    flex:1;border:none;outline:none;font-size:14.5px;font-family:inherit;background:transparent;color:var(--ink);
+  }
+  .search-box input::placeholder{color:#9aa5b8}
+  .search-box .go{
+    border:none;background:var(--blue-600);color:#fff;font-weight:800;font-size:13px;
+    border-radius:10px;padding:8px 16px;cursor:pointer;
+  }
+  .hot-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+  .hot{font-size:12px;color:var(--blue-700);background:var(--blue-50);border-radius:999px;padding:5px 12px;cursor:pointer;font-weight:600}
+  .result-meta{font-size:12px;color:var(--ink-soft);margin:4px 2px 10px}
+  .clause-card{margin-bottom:11px}
+  .clause-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .clause-head h3{font-size:13.5px;font-weight:700;flex:1;min-width:140px}
+  .clause-body{
+    margin-top:10px;font-size:12.8px;color:var(--ink-soft);line-height:1.7;
+    background:var(--blue-50);border-radius:0 10px 10px 0;border-left:3px solid var(--blue-600);
+    padding:9px 12px;
+  }
+  .clause-body mark{background:#fff0c2;color:#8a5a00;font-weight:700;padding:0 2px;border-radius:3px}
+  .clause-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .empty{text-align:center;padding:44px 20px;color:var(--ink-soft);font-size:13.5px}
+  .empty .big{font-size:40px;display:block;margin-bottom:10px}
+  .sys-badge{display:inline-block;font-size:10.5px;color:#fff;border-radius:6px;padding:1px 7px;font-weight:700}
+  .fav-on{border-color:var(--orange) !important;color:var(--orange) !important;background:var(--orange-bg) !important}
+</style>
+<script src="../analytics-config.js"></script>
+<script src="tracker.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <a class="back" href="home.html">‹</a>
+    <h1>规范标准查询</h1>
+    <span class="pack" id="libCount"></span>
+  </header>
+
+  <main class="page">
+
+    <div class="search-box">
+      <span style="font-size:16px">🔎</span>
+      <input id="q" type="text" placeholder="隐患关键词 / 标准号，如：临边、配电箱、1926.501" autocomplete="off">
+      <button class="go" id="goBtn">查询</button>
+    </div>
+
+    <div class="hot-row">
+      <span class="hot" data-q="临边">临边防护</span>
+      <span class="hot" data-q="安全带">安全带</span>
+      <span class="hot" data-q="配电箱">配电箱</span>
+      <span class="hot" data-q="气瓶">气瓶间距</span>
+      <span class="hot" data-q="脚手架">脚手架</span>
+      <span class="hot" data-q="受限空间">受限空间</span>
+      <span class="hot" data-q="噪声">噪声</span>
+      <span class="hot" data-q="501">OSHA 1926.501</span>
+    </div>
+
+    <div class="chip-row" id="filterRow" style="display:none;margin:12px 0 4px">
+      <span class="chip on" data-f="all">全部法域</span>
+      <span class="chip" data-f="GB">🇨🇳 GB/JGJ</span>
+      <span class="chip" data-f="OSHA">🇺🇸 OSHA</span>
+      <span class="chip" data-f="ISO">🌐 ISO</span>
+    </div>
+
+    <!-- 我的引用夹 -->
+    <div class="sec-head"><h2>⭐ 我的引用夹</h2><span style="font-size:12px;color:var(--ink-soft)" id="favCount"></span></div>
+    <section class="card" id="favBox" style="padding:14px"></section>
+
+    <!-- 检索结果 -->
+    <div id="results" style="display:none;margin-top:16px">
+      <p class="result-meta" id="resultMeta"></p>
+      <div id="resultList"></div>
+    </div>
+
+    <!-- 全部条文浏览 -->
+    <div class="sec-head"><h2>条文库</h2><span style="font-size:12px;color:var(--ink-soft)">点击标准号或关键词开始检索</span></div>
+    <div id="libSection"></div>
+
+    <p class="foot-note">条文为要点摘述（非官方原文），正式引用请以官方发布文本为准<br>点击条文卡上的 ⭐ 加入引用夹（写报告时可引用）</p>
+  </main>
+
+  <nav class="tabbar">
+    <a href="home.html"><span class="ico">🏠</span>工作台</a>
+    <a href="log.html"><span class="ico">🔁</span>隐患台账</a>
+    <a class="on" href="search.html"><span class="ico">📖</span>标准</a>
+    <a href="academy.html"><span class="ico">📚</span>修炼库</a>
+  </nav>
+
+<script src="app.js"></script>
+<script>
+let activeFilter = 'all', lastQuery = '';
+document.getElementById('libCount').textContent = CLAUSES.length + ' 条 · 三法域';
+
+function sysColor(s){ return s==='OSHA' ? '#8a4b08' : (s==='ISO' ? '#0ea36b' : 'var(--blue-600)'); }
+
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escReg(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+function highlight(text, kw){
+  if(!kw || kw.length < 2) return esc(text);
+  try{ return esc(text).replace(new RegExp('(' + escReg(kw) + ')','gi'), '<mark>$1</mark>'); }
+  catch(e){ return esc(text); }
+}
+
+function card(c, kw){
+  const fav = DB.citations().includes(c.id);
+  return `
+  <section class="card clause-card">
+    <div class="clause-head">
+      <span class="sys-badge" style="background:${sysColor(c.sys)}">${c.sys}</span>
+      <b style="font-size:12px;color:var(--blue-700)">${highlight(c.code, kw)}</b>
+      ${c.clause ? '<span style="font-size:11px;color:var(--ink-soft)">§'+c.clause+'</span>' : ''}
+      <h3>${highlight(c.title, kw)}</h3>
+    </div>
+    <div class="clause-body">${highlight(c.text, kw)}</div>
+    <div style="font-size:11px;color:var(--ink-soft);margin-top:7px">↔ 对照：${highlight(c.xref, kw)}</div>
+    <div class="clause-actions">
+      <button class="btn btn-ghost btn-sm ${fav?'fav-on':''}" onclick="favToggle('${c.id}')">⭐ ${fav?'已在引用夹':'加入引用夹'}</button>
+      <button class="btn btn-ghost btn-sm" onclick="copyCite('${c.id}')">📋 复制引用</button>
+    </div>
+  </section>`;
+}
+
+function search(q){
+  lastQuery = q;
+  const hits = findClauses(q)
+    .filter(c => activeFilter==='all' || c.sys===activeFilter);
+  document.getElementById('results').style.display = '';
+  document.getElementById('filterRow').style.display = 'flex';
+  document.getElementById('resultMeta').textContent =
+    '“' + q + '” 命中 ' + hits.length + ' 条（库内 ' + CLAUSES.length + ' 条）' +
+    (activeFilter!=='all' ? ' · 筛选：' + activeFilter : '');
+  document.getElementById('resultList').innerHTML = hits.length
+    ? hits.map(c=>card(c, q.trim())).join('')
+    : '<div class="empty"><span class="big">🤔</span>未命中，换个关键词试试</div>';
+}
+
+function favToggle(cid){
+  const added = DB.toggleCitation(cid);
+  toast(added ? '已加入引用夹' : '已移出引用夹');
+  renderFav();
+  if(lastQuery) search(lastQuery); else renderLib();
+}
+
+function copyCite(cid){
+  const c = CLAUSES.find(x=>x.id===cid);
+  const txt = `${c.title} — ${c.code}${c.clause?' §'+c.clause:''}（${c.sys}）：${c.text}`;
+  if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=>toast('已复制到剪贴板')); }
+  else toast('复制功能需 HTTPS 环境，请手动摘录');
+}
+
+function renderFav(){
+  const favs = DB.citations().map(id=>CLAUSES.find(c=>c.id===id)).filter(Boolean);
+  document.getElementById('favCount').textContent = favs.length + ' 条';
+  document.getElementById('favBox').innerHTML = favs.length
+    ? favs.map(c=>`<div style="display:flex;gap:9px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)">
+        <span class="sys-badge" style="background:${sysColor(c.sys)}">${c.sys}</span>
+        <div style="flex:1;font-size:12.5px"><b>${esc(c.code)}</b> ${esc(c.title)}</div>
+        <button class="btn btn-ghost btn-sm" onclick="favToggle('${c.id}')">移出</button>
+      </div>`).join('')
+    : '<p style="font-size:12.5px;color:var(--ink-soft)">还没有收藏。检索条文后点击 ⭐ 加入，写报告时可直接引用。</p>';
+}
+
+function renderLib(){
+  document.getElementById('libSection').innerHTML =
+    `<section class="card" style="display:grid;gap:4px">${CLAUSES.slice().sort((a,b)=>a.sys.localeCompare(b.sys)||a.code.localeCompare(b.code)).map(c=>`
+      <div style="display:flex;gap:9px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)">
+        <span class="sys-badge" style="background:${sysColor(c.sys)}">${c.sys}</span>
+        <div style="flex:1;font-size:12.5px"><b>${esc(c.code)}</b>${c.clause?' §'+c.clause:''} · ${esc(c.title)}</div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('q').value='${esc(c.kw.split(' ')[0])}';search('${esc(c.kw.split(' ')[0])}')">相关</button>
+      </div>`).join('')}</section>`;
+}
+
+document.querySelectorAll('.hot').forEach(h=>{
+  h.addEventListener('click',()=>{
+    document.getElementById('q').value = h.dataset.q;
+    activeFilter='all';
+    document.querySelectorAll('#filterRow .chip').forEach(x=>x.classList.toggle('on', x.dataset.f==='all'));
+    search(h.dataset.q);
+  });
+});
+document.getElementById('goBtn').addEventListener('click',()=>search(document.getElementById('q').value));
+document.getElementById('q').addEventListener('keydown',e=>{ if(e.key==='Enter') search(e.target.value); });
+
+document.querySelectorAll('#filterRow .chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('#filterRow .chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');
+    activeFilter = c.dataset.f;
+    if(lastQuery) search(lastQuery);
+  });
+});
+
+renderFav(); renderLib();
+</script>
+</div>
+</body>
+</html>

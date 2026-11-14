@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>隐患台账 · EHS-AI</title>
+<link rel="stylesheet" href="app.css">
+<script src="../analytics-config.js"></script>
+<script src="tracker.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <a class="back" href="home.html">‹</a>
+    <h1>隐患台账</h1>
+    <span class="pack" id="closeRate"></span>
+  </header>
+
+  <main class="page">
+    <div class="chip-row" id="filterRow" style="margin-bottom:14px"></div>
+    <div id="list"></div>
+    <p class="foot-note">数据来自拍照识别与手动登记 · 状态流转实时保存本机</p>
+  </main>
+
+  <nav class="tabbar">
+    <a href="home.html"><span class="ico">🏠</span>工作台</a>
+    <a class="on" href="log.html"><span class="ico">🔁</span>隐患台账</a>
+    <a href="search.html"><span class="ico">📖</span>标准</a>
+    <a href="academy.html"><span class="ico">📚</span>修炼库</a>
+  </nav>
+
+<script src="app.js"></script>
+<script>
+const F = { all:'全部', todo:'待整改', doing:'整改中', check:'待复查', done:'已闭环' };
+const SC = { todo:'todo', doing:'doing', check:'check', done:'done' };
+let filter = 'all';
+
+function counts(){
+  const list = DB.listHazards();
+  const c = { all:list.length, todo:0, doing:0, check:0, done:0 };
+  list.forEach(h => c[h.status] = (c[h.status]||0)+1);
+  return c;
+}
+
+function renderFilters(){
+  const c = counts();
+  document.getElementById('filterRow').innerHTML = Object.entries(F).map(([k,v])=>
+    `<span class="chip ${filter===k?'on':''}" data-f="${k}" onclick="setFilter('${k}')">${v} ${c[k]||0}</span>`).join('');
+  document.getElementById('closeRate').textContent = c.all ? '闭环率 ' + Math.round((c.done/c.all)*100) + '%' : '暂无数据';
+}
+
+function setFilter(f){ filter = f; renderFilters(); renderList(); }
+
+function renderList(){
+  const list = DB.listHazards().filter(h => filter==='all' || h.status===filter);
+  const box = document.getElementById('list');
+  if(!list.length){
+    box.innerHTML = `<div class="card" style="text-align:center;padding:36px 16px;color:var(--ink-soft);font-size:13.5px">
+      暂无隐患记录<br><a class="btn btn-primary btn-sm" style="margin-top:14px" href="scan.html">去拍照识别 / 手动登记</a></div>`;
+    return;
+  }
+  const today = todayISO();
+  box.innerHTML = list.map(h=>{
+    const riskCls = h.risk==='high' ? 'high' : (h.risk==='review' ? 'lowconf' : 'mid');
+    const riskName = {high:'高',medium:'中',low:'低',review:'复核'}[h.risk]||'—';
+    const ddlCls = (h.status!=='done' && h.ddl) ? (h.ddl < today ? 'deadline-late' : 'deadline-soon') : '';
+    const ddlTxt = h.ddl ? (h.status==='done' ? h.ddl.slice(5)+' 闭环' : (h.ddl<today ? '已逾期 '+h.ddl.slice(5) : '期限 '+h.ddl.slice(5))) : '';
+    return `
+    <section class="card log-item">
+      <div class="log-head" onclick="this.parentNode.classList.toggle('open')">
+        <span class="risk ${riskCls}">${riskName}</span>
+        <div style="flex:1">
+          <h3>${esc(h.desc)}</h3>
+          <div class="log-sub">
+            ${h.owner ? `<span>责任人：${esc(h.owner)}</span>` : ''}
+            ${ddlTxt ? `<span class="${ddlCls}">${ddlTxt}</span>` : ''}
+            <span>${h.source==='manual'?'手动登记':'AI 识别'}</span>
+          </div>
+        </div>
+        <span class="status ${SC[h.status]||'todo'}">${F[h.status]||h.status}</span>
+      </div>
+      <div class="log-body">
+        ${h.citation ? `<div class="cite" style="margin-bottom:11px"><span class="std">${h.source==='manual'?'GB':'AI'}</span><b>${esc(h.citation.std)}${h.citation.clause?' §'+esc(h.citation.clause):''}</b></div>` : ''}
+        <div class="timeline">
+          ${(h.timeline||[]).map(e=>`<div class="tl done"><span class="pt"></span>${fmt(e.t)} ${esc(e.txt)}</div>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a class="btn btn-ghost btn-sm" href="hazard-detail.html?id=${h.id}">处理 / 流转</a>
+          ${h.status==='todo' ? `<button class="btn btn-ghost btn-sm" onclick="quick('doing','${h.id}')">开始整改</button>` : ''}
+          ${h.status==='doing' ? `<button class="btn btn-ghost btn-sm" onclick="quick('check','${h.id}')">上报完成</button>` : ''}
+          ${h.status==='check' ? `<button class="btn btn-green btn-sm" onclick="quick('done','${h.id}')">复查销项</button>` : ''}
+          <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delH('${h.id}')">删除</button>
+        </div>
+      </div>
+    </section>`;
+  }).join('');
+}
+
+function quick(st, id){
+  const h = DB.hazard(id); if(!h) return;
+  h.status = st; DB.saveHazard(h);
+  addEvent(h, {doing:'开始整改', check:'整改完成，待复查', done:'复查通过，销项闭环'}[st]);
+  toast('已流转：' + F[st]);
+  renderFilters(); renderList();
+}
+
+function delH(id){
+  const all = DB.hazards(); delete all[id]; Store.set('ehs_hazards', all);
+  DB.inspections().forEach(ins=>{
+    if(ins.hazards.includes(id)){ ins.hazards = ins.hazards.filter(x=>x!==id); DB.saveInspection(ins); }
+  });
+  toast('已删除'); renderFilters(); renderList();
+}
+
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+renderFilters(); renderList();
+</script>
+</div>
+</body>
+</html>

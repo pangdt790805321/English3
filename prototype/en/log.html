@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hazard Log · SafeLens AI</title>
+<link rel="stylesheet" href="../app.css">
+<script src="../../analytics-config.js"></script>
+<script src="../tracker.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <a class="back" href="home.html">‹</a>
+    <h1>Hazard Log</h1>
+    <span class="pack">Close-out 82%</span>
+  </header>
+
+  <main class="page">
+
+    <!-- Filters -->
+    <div class="chip-row" id="filterRow" style="margin-bottom:14px">
+      <span class="chip on" data-f="all">All 34</span>
+      <span class="chip" data-f="todo">To rectify 1</span>
+      <span class="chip" data-f="doing">In progress 1</span>
+      <span class="chip" data-f="check">Pending review 1</span>
+      <span class="chip" data-f="done">Closed 31</span>
+    </div>
+
+    <!-- 1 -->
+    <section class="card log-item" data-s="todo">
+      <div class="log-head" onclick="this.parentNode.classList.toggle('open')">
+        <span class="risk high">HIGH</span>
+        <div style="flex:1">
+          <h3>No guardrail at unprotected open edge</h3>
+          <div class="log-sub">
+            <span>Industrial Park Ph. II</span><span>Owner: J. Carter</span>
+            <span class="deadline-late">Due today 6 pm</span>
+          </div>
+        </div>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="log-body">
+        <div class="timeline">
+          <div class="tl done"><span class="pt"></span>Nov 12 09:41 AI photo detection (confidence 96%)</div>
+          <div class="tl done"><span class="pt"></span>Nov 12 09:52 Assigned J. Carter · due Nov 13</div>
+          <div class="tl now"><span class="pt"></span>Waiting for rectification report…</div>
+          <div class="tl"><span class="pt"></span>Review & close-out</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a class="btn btn-ghost btn-sm" href="hazard-detail.html">Cross-refs</a>
+          <button class="btn btn-ghost btn-sm" onclick="toast('Reminder sent')">Send reminder</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="card log-item" data-s="doing">
+      <div class="log-head" onclick="this.parentNode.classList.toggle('open')">
+        <span class="risk mid">MED</span>
+        <div style="flex:1">
+          <h3>Distribution panel unlocked, no warning sign</h3>
+          <div class="log-sub">
+            <span>Industrial Park Ph. II</span><span>Owner: R. Miller</span>
+            <span class="deadline-soon">3 days left</span>
+          </div>
+        </div>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="log-body">
+        <div class="timeline">
+          <div class="tl done"><span class="pt"></span>Nov 12 09:41 AI photo detection (confidence 88%)</div>
+          <div class="tl done"><span class="pt"></span>Nov 12 10:05 Assigned R. Miller · due Nov 15</div>
+          <div class="tl done"><span class="pt"></span>Nov 12 11:30 R. Miller: locks & signage ordered</div>
+          <div class="tl now"><span class="pt"></span>Rectification in progress…</div>
+          <div class="tl"><span class="pt"></span>Review & close-out</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="card log-item" data-s="check">
+      <div class="log-head" onclick="this.parentNode.classList.toggle('open')">
+        <span class="risk high">HIGH</span>
+        <div style="flex:1">
+          <h3>Worker at height without fall-arrest harness</h3>
+          <div class="log-sub">
+            <span>Industrial Park Ph. II</span><span>Owner: M. Wang</span>
+            <span class="deadline-soon">Review today</span>
+          </div>
+        </div>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="log-body">
+        <div class="timeline">
+          <div class="tl done"><span class="pt"></span>Nov 12 09:41 AI photo detection (confidence 93%)</div>
+          <div class="tl done"><span class="pt"></span>Nov 12 09:50 Assigned M. Wang · same-day fix</div>
+          <div class="tl done"><span class="pt"></span>Nov 12 16:20 M. Wang uploaded rectification photos ×2</div>
+          <div class="tl now"><span class="pt"></span>Awaiting safety officer review…</div>
+        </div>
+        <button class="btn btn-green btn-sm" onclick="toast('Demo: review photo → AI compare → auto close-out')">📷 Review & close out</button>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="card log-item" data-s="done">
+      <div class="log-head" onclick="this.parentNode.classList.toggle('open')">
+        <span class="risk ok">MED</span>
+        <div style="flex:1">
+          <h3>Cable run on ground without protection</h3>
+          <div class="log-sub">
+            <span>Plant A · Electrical special</span><span>R. Miller</span><span>Closed Nov 11</span>
+          </div>
+        </div>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="log-body">
+        <div class="timeline">
+          <div class="tl done"><span class="pt"></span>Nov 10 14:22 AI photo detection (confidence 91%)</div>
+          <div class="tl done"><span class="pt"></span>Nov 10 14:40 Assigned R. Miller · due Nov 11</div>
+          <div class="tl done"><span class="pt"></span>Nov 11 09:15 Rectification photos uploaded</div>
+          <div class="tl done"><span class="pt"></span>Nov 11 10:02 Review passed · AI similarity 97%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="card log-item" data-s="done">
+      <div class="log-head" onclick="this.parentNode.classList.toggle('open')">
+        <span class="risk ok">LOW</span>
+        <div style="flex:1">
+          <h3>Faded safety signage</h3>
+          <div class="log-sub">
+            <span>Warehouse · Fire special</span><span>Q. Zhou</span><span>Closed Nov 09</span>
+          </div>
+        </div>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="log-body">
+        <div class="timeline">
+          <div class="tl done"><span class="pt"></span>Nov 08 10:05 Found during inspection</div>
+          <div class="tl done"><span class="pt"></span>Nov 09 15:30 Sign replaced, review passed</div>
+        </div>
+      </div>
+    </section>
+
+    <p class="foot-note">Report → Review photo → AI compare → Auto close-out & archive<br>© 2026 SafeLens AI · Prototype demo data</p>
+  </main>
+
+  <!-- Bottom navigation -->
+  <nav class="tabbar">
+    <a href="home.html"><span class="ico">🏠</span>Home</a>
+    <a class="on" href="log.html"><span class="ico">🔁</span>Hazard Log</a>
+    <a href="search.html"><span class="ico">📖</span>Standards</a>
+    <a href="home.html"><span class="ico">👤</span>Profile</a>
+  </nav>
+
+<script>
+  document.querySelectorAll('#filterRow .chip').forEach(c=>{
+    c.addEventListener('click',()=>{
+      document.querySelectorAll('#filterRow .chip').forEach(x=>x.classList.remove('on'));
+      c.classList.add('on');
+      const f = c.dataset.f;
+      document.querySelectorAll('.log-item').forEach(item=>{
+        item.style.display = (f==='all' || item.dataset.s===f) ? '' : 'none';
+      });
+    });
+  });
+
+  function toast(msg){
+    let t = document.querySelector('.toast');
+    if(!t){ t = document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 3000);
+  }
+</script>
+</div>
+</body>
+</html>
