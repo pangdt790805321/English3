@@ -58,7 +58,7 @@ document.getElementById('kpis').innerHTML = `
   <div class="kpi"><b>${(s.events||[]).length}</b><span>最近事件记录</span></div>`;
 
 const MODNAME = { scan:'拍照识隐患', search:'标准查询', academy:'修炼库', report:'检查报告', log:'隐患台账',
-  result:'识别结果', detail:'隐患详情', profile:'个人中心', demo:'AI识别Demo', en:'国际版' };
+  result:'识别结果', detail:'隐患详情', profile:'个人中心', demo:'AI识别Demo' };
 document.getElementById('modTable').innerHTML = `
   <tr><th>板块</th><th>使用次数</th></tr>` +
   (Object.keys(s.mod||{}).length

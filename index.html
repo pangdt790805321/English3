@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EHS-AI 智能应用平台 | SafeLens AI — Every hazard, backed by a standard</title>
+<title>EHS-AI 智能应用平台 — 让每一条隐患都有标准依据</title>
 <meta name="description" content="拍照识别隐患，AI 同步给出标准条文依据，生成双语检查报告。支持 GB / OSHA / ISO 45001 / EN / ILO 多法域。">
 <style>
   :root{
@@ -54,11 +54,6 @@
   .nav-links{display:flex;gap:26px;align-items:center}
   .nav-links a{color:var(--ink-soft);text-decoration:none;font-size:14.5px;font-weight:500}
   .nav-links a:hover{color:var(--blue-600)}
-  .lang-btn{
-    border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;
-    font-size:13px;font-weight:700;color:var(--blue-700);cursor:pointer;
-  }
-  .lang-btn:hover{border-color:var(--blue-600)}
   .btn{
     display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;
     border-radius:12px;padding:13px 26px;font-size:15.5px;font-weight:700;text-decoration:none;
@@ -316,15 +311,14 @@
 <!-- ============ NAV ============ -->
 <header>
   <div class="wrap nav">
-    <div class="logo"><span class="mark">🛡</span><span data-cn="EHS-AI 智能应用平台" data-en="SafeLens AI · EHS Platform">EHS-AI 智能应用平台</span></div>
+    <div class="logo"><span class="mark">🛡</span><span>EHS-AI 智能应用平台</span></div>
     <nav class="nav-links">
-      <a href="#portal" data-cn="🧭 板块导航" data-en="🧭 Modules">🧭 板块导航</a>
-      <a href="#core" data-cn="拍照识隐患" data-en="Photo ID">拍照识隐患</a>
-      <a href="#features" data-cn="功能" data-en="Features">功能</a>
-      <a href="#global" data-cn="全球标准" data-en="Standards">全球标准</a>
-      <a href="#trust" data-cn="可信与合规" data-en="Trust">可信与合规</a>
-      <a href="#pricing" data-cn="价格" data-en="Pricing">价格</a>
-      <button class="lang-btn" id="langToggle">EN</button>
+      <a href="#portal">🧭 板块导航</a>
+      <a href="#core">拍照识隐患</a>
+      <a href="#features">功能</a>
+      <a href="#global">全球标准</a>
+      <a href="#trust">可信与合规</a>
+      <a href="#pricing">价格</a>
     </nav>
   </div>
 </header>
@@ -333,10 +327,10 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="kicker" data-cn="EHS × AI 智能工作台" data-en="EHS × AI WORKBENCH">EHS × AI 智能工作台</div>
+      <div class="kicker">EHS × AI 智能工作台</div>
       <h1>
-        <span data-cn="让每一条隐患，都有标准依据" data-en="Every hazard, backed by a standard.">让每一条隐患，都有标准依据</span>
-        <span class="en-title" data-cn="拍照识别 · 条文依据 · 双语报告" data-en="Snap a photo. Get the citation. Ship the report.">拍照识别 · 条文依据 · 双语报告</span>
+        <span>让每一条隐患，都有标准依据</span>
+        <span class="en-title">拍照识别 · 条文依据 · 双语报告</span>
       </h1>
       <div class="badges">
         <span class="badge">GB / GBZ（中国）</span>
@@ -346,29 +340,29 @@
         <span class="badge">ILO 公约</span>
       </div>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="prototype/home.html" data-cn="📸 试试拍照识隐患" data-en="📸 Try Photo Hazard ID">📸 试试拍照识隐患</a>
-        <a class="btn btn-ghost" href="#global" data-cn="查看全球标准覆盖" data-en="See standards coverage">查看全球标准覆盖</a>
+        <a class="btn btn-primary" href="prototype/home.html">📸 试试拍照识隐患</a>
+        <a class="btn btn-ghost" href="#global">查看全球标准覆盖</a>
       </div>
-      <p class="hero-note" data-cn="微信 / 浏览器扫码即用，无需下载安装；<b>海外版</b>支持网页与 PWA。" data-en="Works in your browser or via WeChat scan — no install. International edition: Web + PWA.">微信 / 浏览器扫码即用，无需下载安装；<b>海外版</b>支持网页与 PWA。</p>
+      <p class="hero-note">微信 / 浏览器扫码即用，无需下载安装；<b>海外版</b>支持网页与 PWA。</p>
     </div>
 
     <!-- phone mockup -->
     <div class="phone" aria-hidden="true">
       <div class="phone-screen">
         <div class="cam-view">
-          <span class="label" data-cn="● 检测中 · 施工现场" data-en="● Scanning · Construction site">● 检测中 · 施工现场</span>
+          <span class="label">● 检测中 · 施工现场</span>
           <div class="scan-line"></div>
-          <div class="detect-box"><span data-cn="3 项隐患" data-en="3 hazards">3 项隐患</span></div>
+          <div class="detect-box"><span>3 项隐患</span></div>
         </div>
         <div class="result">
-          <div class="r-title">⚠ <span data-cn="临边作业未设置防护栏杆" data-en="No guardrail at open edge">临边作业未设置防护栏杆</span> <span class="risk high" data-cn="高风险" data-en="HIGH">高风险</span></div>
+          <div class="r-title">⚠ <span>临边作业未设置防护栏杆</span> <span class="risk high">高风险</span></div>
           <div class="citation">
-            <div style="margin-bottom:6px"><span class="std">GB</span><b data-cn="《建筑施工高处作业安全技术规范》JGJ 80-2016 第 4.1.1 条" data-en='GB/T 3608 &amp; JGJ 80-2016 §4.1.1 — "open edges shall be protected"'>《建筑施工高处作业安全技术规范》JGJ 80-2016 第 4.1.1 条</b></div>
-            <div data-cn="↔ 对照：OSHA 29 CFR 1926.501(b)(1) · ISO 45001:2018 §8.1.2" data-en="↔ Cross-ref: GB JGJ 80-2016 §4.1.1 · ISO 45001:2018 §8.1.2">↔ 对照：OSHA 29 CFR 1926.501(b)(1) · ISO 45001:2018 §8.1.2</div>
+            <div style="margin-bottom:6px"><span class="std">GB</span><b>《建筑施工高处作业安全技术规范》JGJ 80-2016 第 4.1.1 条</b></div>
+            <div>↔ 对照：OSHA 29 CFR 1926.501(b)(1) · ISO 45001:2018 §8.1.2</div>
           </div>
-          <div class="fix"><b data-cn="整改建议：" data-en="Fix:">整改建议：</b><span data-cn="立即设置 1.2m 高双层防护栏杆 + 安全网，暂停临边作业。" data-en="Install 1.2 m double guardrail + safety net; pause edge work now.">立即设置 1.2m 高双层防护栏杆 + 安全网，暂停临边作业。</span></div>
+          <div class="fix"><b>整改建议：</b><span>立即设置 1.2m 高双层防护栏杆 + 安全网，暂停临边作业。</span></div>
           <div class="phone-foot">
-            <span class="conf" data-cn="置信度 <b>96%</b> · 条文原文已核验" data-en="Confidence <b>96%</b> · citation verified">置信度 <b>96%</b> · 条文原文已核验</span>
+            <span class="conf">置信度 <b>96%</b> · 条文原文已核验</span>
           </div>
         </div>
       </div>
@@ -380,104 +374,102 @@
 <section id="portal" style="padding-top:56px">
   <div class="wrap">
     <div class="center">
-      <div class="kicker" data-cn="🧭 平台板块" data-en="🧭 PLATFORM MODULES">🧭 平台板块</div>
-      <h2 data-cn="五大板块 + 个人中心" data-en="Five modules + Profile">五大板块 + 个人中心</h2>
-      <p class="sub" data-cn="点击板块进入，板块内再按功能细分继续。" data-en="Tap a module to enter; sub-features inside.">点击板块进入，板块内再按功能细分继续。</p>
+      <div class="kicker">🧭 平台板块</div>
+      <h2>五大板块 + 个人中心</h2>
+      <p class="sub">点击板块进入，板块内再按功能细分继续。</p>
     </div>
     <div class="portal">
 
       <!-- ① 拍照识隐患 -->
       <div class="p-module">
         <div class="p-ico">📷</div>
-        <h3 data-cn="① 拍照识隐患" data-en="① Photo Hazard ID">① 拍照识隐患</h3>
-        <p class="p-desc" data-cn="拍一张现场照片，AI 找出隐患并给出标准条文依据，生成双语检查报告，跟踪整改闭环。" data-en="Snap a photo — AI finds hazards with standard citations, generates bilingual reports and tracks close-out.">拍一张现场照片，AI 找出隐患并给出标准条文依据，生成双语检查报告，跟踪整改闭环。</p>
+        <h3>① 拍照识隐患</h3>
+        <p class="p-desc">拍一张现场照片，AI 找出隐患并给出标准条文依据，生成双语检查报告，跟踪整改闭环。</p>
         <div class="p-subs">
-          <a class="p-sub" href="prototype/scan.html" data-cn="拍照识别" data-en="Scan">拍照识别</a>
-          <a class="p-sub" href="prototype/result.html" data-cn="识别结果" data-en="Results">识别结果</a>
-          <a class="p-sub" href="prototype/hazard-detail.html" data-cn="条文对照" data-en="Cross-refs">条文对照</a>
-          <a class="p-sub" href="prototype/report.html" data-cn="检查报告" data-en="Report">检查报告</a>
-          <a class="p-sub" href="prototype/log.html" data-cn="隐患台账" data-en="Hazard log">隐患台账</a>
+          <a class="p-sub" href="prototype/scan.html">拍照识别</a>
+          <a class="p-sub" href="prototype/result.html">识别结果</a>
+          <a class="p-sub" href="prototype/hazard-detail.html">条文对照</a>
+          <a class="p-sub" href="prototype/report.html">检查报告</a>
+          <a class="p-sub" href="prototype/log.html">隐患台账</a>
         </div>
-        <a class="p-enter" href="prototype/home.html" data-cn="进入板块 →" data-en="Enter module →">进入板块 →</a>
+        <a class="p-enter" href="prototype/home.html">进入板块 →</a>
       </div>
 
       <!-- ② 规范标准查询 -->
       <div class="p-module">
         <div class="p-ico">📖</div>
-        <h3 data-cn="② 规范标准查询" data-en="② Standards Search">② 规范标准查询</h3>
-        <p class="p-desc" data-cn="20 万+ 条款条文级检索：按隐患关键词、行业、标准号三种入口；GB / OSHA / ISO 45001 跨体系对照 + 标准文库下载。" data-en="Clause-level search across 200k+ clauses by keyword, industry or standard no.; GB / OSHA / ISO cross-refs plus a standards library.">20 万+ 条款条文级检索：按隐患关键词、行业、标准号三种入口；GB / OSHA / ISO 45001 跨体系对照 + 标准文库下载。</p>
+        <h3>② 规范标准查询</h3>
+        <p class="p-desc">20 万+ 条款条文级检索：按隐患关键词、行业、标准号三种入口；GB / OSHA / ISO 45001 跨体系对照 + 标准文库下载。</p>
         <div class="p-subs">
-          <a class="p-sub" href="prototype/search.html" data-cn="条文检索" data-en="Clause search">条文检索</a>
-          <a class="p-sub" href="prototype/search.html" data-cn="标准文库" data-en="Library">标准文库</a>
-          <a class="p-sub" href="prototype/hazard-detail.html" data-cn="跨体系对照" data-en="Cross-refs">跨体系对照</a>
-          <a class="p-sub" href="prototype/en/search.html" data-cn="English" data-en="English">English</a>
+          <a class="p-sub" href="prototype/search.html">条文检索</a>
+          <a class="p-sub" href="prototype/search.html">标准文库</a>
+          <a class="p-sub" href="prototype/hazard-detail.html">跨体系对照</a>
         </div>
-        <a class="p-enter" href="prototype/search.html" data-cn="进入板块 →" data-en="Enter module →">进入板块 →</a>
+        <a class="p-enter" href="prototype/search.html">进入板块 →</a>
       </div>
 
       <!-- ③ 安全专家修炼库 -->
       <div class="p-module">
         <div class="p-ico">📚</div>
-        <h3 data-cn="③ 安全专家修炼库" data-en="③ Safety Expert Library">③ 安全专家修炼库</h3>
-        <p class="p-desc" data-cn="12 册深度学习手册 + 12 张 A4 双面检查表 + 18 个月修炼路线，按七维学习法（A 规范 → G 转训）组织，支持进度打卡与文档下载。" data-en="12 handbooks + 12 A4 checklists + an 18-month roadmap by the 7-dimension method, with progress tracking and downloads.">12 册深度学习手册 + 12 张 A4 双面检查表 + 18 个月修炼路线，按七维学习法（A 规范 → G 转训）组织，支持进度打卡与文档下载。</p>
+        <h3>③ 安全专家修炼库</h3>
+        <p class="p-desc">12 册深度学习手册 + 12 张 A4 双面检查表 + 18 个月修炼路线，按七维学习法（A 规范 → G 转训）组织，支持进度打卡与文档下载。</p>
         <div class="p-subs">
-          <a class="p-sub" href="prototype/academy.html" data-cn="核心专题 T01–T06" data-en="Core T01–T06">核心专题 T01–T06</a>
-          <a class="p-sub" href="prototype/academy.html" data-cn="扩展专题 T07–T11" data-en="Extension T07–T11">扩展专题 T07–T11</a>
-          <a class="p-sub" href="prototype/academy.html" data-cn="体系整合 T12" data-en="System T12">体系整合 T12</a>
-          <a class="p-sub" href="prototype/academy.html" data-cn="必背数字" data-en="Key numbers">必背数字</a>
+          <a class="p-sub" href="prototype/academy.html">核心专题 T01–T06</a>
+          <a class="p-sub" href="prototype/academy.html">扩展专题 T07–T11</a>
+          <a class="p-sub" href="prototype/academy.html">体系整合 T12</a>
+          <a class="p-sub" href="prototype/academy.html">必背数字</a>
         </div>
-        <a class="p-enter" href="prototype/academy.html" data-cn="进入板块 →" data-en="Enter module →">进入板块 →</a>
+        <a class="p-enter" href="prototype/academy.html">进入板块 →</a>
       </div>
 
       <!-- ④ 规划中 -->
       <div class="p-module planned" onclick="landingToast()">
-        <span class="planned-tag" data-cn="规划中" data-en="Planned">规划中</span>
+        <span class="planned-tag">规划中</span>
         <div class="p-ico">🧩</div>
-        <h3 data-cn="④ 板块四（待规划）" data-en="④ Module 4 (TBD)">④ 板块四（待规划）</h3>
-        <p class="p-desc" data-cn="候选方向：化学品 MSDS 查询 · 事故案例库 · 注安考试题库。规划确定后接入。" data-en="Candidates: MSDS lookup · incident case library · CSE exam bank. To be planned.">候选方向：化学品 MSDS 查询 · 事故案例库 · 注安考试题库。规划确定后接入。</p>
+        <h3>④ 板块四（待规划）</h3>
+        <p class="p-desc">候选方向：化学品 MSDS 查询 · 事故案例库 · 注安考试题库。规划确定后接入。</p>
         <div class="p-subs">
           <span class="p-sub" style="background:#eef2fa;border-color:#dfe6f2;color:#8a94a8">🧪 MSDS</span>
           <span class="p-sub" style="background:#eef2fa;border-color:#dfe6f2;color:#8a94a8">🗂️ 案例库</span>
           <span class="p-sub" style="background:#eef2fa;border-color:#dfe6f2;color:#8a94a8">🎓 题库</span>
         </div>
-        <a class="p-enter" href="javascript:void(0)" onclick="landingToast();return false" style="background:#e8edf7;color:var(--ink-soft)" data-cn="敬请期待" data-en="Coming soon">敬请期待</a>
+        <a class="p-enter" href="javascript:void(0)" onclick="landingToast();return false" style="background:#e8edf7;color:var(--ink-soft)">敬请期待</a>
       </div>
 
       <!-- ⑤ 规划中 -->
       <div class="p-module planned" onclick="landingToast()">
-        <span class="planned-tag" data-cn="规划中" data-en="Planned">规划中</span>
+        <span class="planned-tag">规划中</span>
         <div class="p-ico">🧩</div>
-        <h3 data-cn="⑤ 板块五（待规划）" data-en="⑤ Module 5 (TBD)">⑤ 板块五（待规划）</h3>
-        <p class="p-desc" data-cn="候选方向：企业多站点看板 · API 集成 · 数据分析报告。规划确定后接入。" data-en="Candidates: multi-site dashboard · API integration · analytics. To be planned.">候选方向：企业多站点看板 · API 集成 · 数据分析报告。规划确定后接入。</p>
+        <h3>⑤ 板块五（待规划）</h3>
+        <p class="p-desc">候选方向：企业多站点看板 · API 集成 · 数据分析报告。规划确定后接入。</p>
         <div class="p-subs">
           <span class="p-sub" style="background:#eef2fa;border-color:#dfe6f2;color:#8a94a8">📊 看板</span>
           <span class="p-sub" style="background:#eef2fa;border-color:#dfe6f2;color:#8a94a8">🔗 API</span>
           <span class="p-sub" style="background:#eef2fa;border-color:#dfe6f2;color:#8a94a8">📈 分析</span>
         </div>
-        <a class="p-enter" href="javascript:void(0)" onclick="landingToast();return false" style="background:#e8edf7;color:var(--ink-soft)" data-cn="敬请期待" data-en="Coming soon">敬请期待</a>
+        <a class="p-enter" href="javascript:void(0)" onclick="landingToast();return false" style="background:#e8edf7;color:var(--ink-soft)">敬请期待</a>
       </div>
 
       <!-- 个人中心 -->
       <div class="p-module">
         <div class="p-ico">👤</div>
-        <h3 data-cn="👤 个人中心" data-en="👤 Profile">👤 个人中心</h3>
-        <p class="p-desc" data-cn="账号与法规包管理、我的检查与报告、学习进度、引用夹和平台设置。" data-en="Account & regulation packs, my inspections and reports, learning progress, citation folder and settings.">账号与法规包管理、我的检查与报告、学习进度、引用夹和平台设置。</p>
+        <h3>👤 个人中心</h3>
+        <p class="p-desc">账号与法规包管理、我的检查与报告、学习进度、引用夹和平台设置。</p>
         <div class="p-subs">
-          <a class="p-sub" href="prototype/profile.html" data-cn="我的检查" data-en="My inspections">我的检查</a>
-          <a class="p-sub" href="prototype/profile.html" data-cn="学习进度" data-en="Learning">学习进度</a>
-          <a class="p-sub" href="prototype/profile.html" data-cn="引用夹" data-en="Citations">引用夹</a>
-          <a class="p-sub" href="prototype/profile.html" data-cn="设置" data-en="Settings">设置</a>
+          <a class="p-sub" href="prototype/profile.html">我的检查</a>
+          <a class="p-sub" href="prototype/profile.html">学习进度</a>
+          <a class="p-sub" href="prototype/profile.html">引用夹</a>
+          <a class="p-sub" href="prototype/profile.html">设置</a>
         </div>
-        <a class="p-enter" href="prototype/profile.html" data-cn="进入个人中心 →" data-en="Open profile →">进入个人中心 →</a>
+        <a class="p-enter" href="prototype/profile.html">进入个人中心 →</a>
       </div>
 
     </div>
 
     <!-- 更多资源 -->
     <div class="more-strip">
-      <a href="prototype/en/home.html" data-cn="🌍 国际版原型（English）" data-en="🌍 International prototype">🌍 国际版原型（English）</a>
-      <a href="http://localhost:8643/" id="demoLink" target="_blank" data-cn="🔬 真实 AI 识别 Demo" data-en="🔬 Live AI demo">🔬 真实 AI 识别 Demo</a>
-      <a href="产品方案初稿.md" target="_blank" download data-cn="📄 产品方案文档" data-en="📄 Product plan">📄 产品方案文档</a>
+      <a href="http://localhost:8643/" id="demoLink" target="_blank">🔬 真实 AI 识别 Demo</a>
+      <a href="产品方案初稿.md" target="_blank" download>📄 产品方案文档</a>
     </div>
   </div>
 </section>
@@ -486,42 +478,42 @@
 <section id="core">
   <div class="wrap spot-grid">
     <div>
-      <div class="kicker" data-cn="核心功能 · 最快上手" data-en="CORE FEATURE · FASTEST TO START">核心功能 · 最快上手</div>
-      <h2 data-cn="拍照识别隐患，60 秒出依据" data-en="Snap a photo. Get the citation in 60 seconds.">拍照识别隐患，60 秒出依据</h2>
-      <p class="sub" data-cn="拍一张现场照片，AI 自动找出隐患，同步给出你所在法域的标准条文原文依据与整改建议——并支持跨体系对照。" data-en="Take one site photo. AI finds the hazards, attaches the exact clause from your jurisdiction's standards, and drafts the fix — with cross-jurisdiction references.">拍一张现场照片，AI 自动找出隐患，同步给出你所在法域的标准条文原文依据与整改建议——并支持跨体系对照。</p>
+      <div class="kicker">核心功能 · 最快上手</div>
+      <h2>拍照识别隐患，60 秒出依据</h2>
+      <p class="sub">拍一张现场照片，AI 自动找出隐患，同步给出你所在法域的标准条文原文依据与整改建议——并支持跨体系对照。</p>
       <div class="steps">
         <div class="step">
           <div class="num">1</div>
-          <div><h4 data-cn="拍照 / 上传" data-en="Snap or upload">拍照 / 上传</h4>
-          <p data-cn="支持单张、多张与连续检查任务；建筑、化工、消防、用电等专项模式。" data-en="Single or batch photos per inspection; dedicated modes for construction, chemical, fire and electrical.">支持单张、多张与连续检查任务；建筑、化工、消防、用电等专项模式。</p></div>
+          <div><h4>拍照 / 上传</h4>
+          <p>支持单张、多张与连续检查任务；建筑、化工、消防、用电等专项模式。</p></div>
         </div>
         <div class="step">
           <div class="num">2</div>
-          <div><h4 data-cn="AI 识别 + 条文检索" data-en="AI detection + citation retrieval">AI 识别 + 条文检索</h4>
-          <p data-cn="隐患描述、风险等级、标准号与条款原文一并输出；低置信度自动标记人工复核。" data-en="Hazard description, risk level, standard clause and original text — low-confidence items flagged for review.">隐患描述、风险等级、标准号与条款原文一并输出；低置信度自动标记人工复核。</p></div>
+          <div><h4>AI 识别 + 条文检索</h4>
+          <p>隐患描述、风险等级、标准号与条款原文一并输出；低置信度自动标记人工复核。</p></div>
         </div>
         <div class="step">
           <div class="num">3</div>
-          <div><h4 data-cn="一键生成双语报告" data-en="One-click bilingual report">一键生成双语报告</h4>
-          <p data-cn="图文检查报告（PDF / Word），含隐患台账、责任人与整改期限，当场交付。" data-en="Photo-rich inspection report (PDF / Word) with hazard log, owners and deadlines — delivered on site.">图文检查报告（PDF / Word），含隐患台账、责任人与整改期限，当场交付。</p></div>
+          <div><h4>一键生成双语报告</h4>
+          <p>图文检查报告（PDF / Word），含隐患台账、责任人与整改期限，当场交付。</p></div>
         </div>
       </div>
     </div>
     <div style="display:grid;gap:16px">
       <div class="t-card">
         <div class="t-icon">🎯</div>
-        <h3 data-cn="只检索，不编造" data-en="Retrieved, never invented">只检索，不编造</h3>
-        <p data-cn="所有条文均来自结构化法规知识库，AI 不允许自由生成标准号；每条引用可回看原文。" data-en="Every citation is retrieved from a structured regulation library — the model cannot invent standard numbers. Original text always shown.">所有条文均来自结构化法规知识库，AI 不允许自由生成标准号；每条引用可回看原文。</p>
+        <h3>只检索，不编造</h3>
+        <p>所有条文均来自结构化法规知识库，AI 不允许自由生成标准号；每条引用可回看原文。</p>
       </div>
       <div class="t-card">
         <div class="t-icon">🌏</div>
-        <h3 data-cn="同一隐患，多法域对照" data-en="One hazard, many jurisdictions">同一隐患，多法域对照</h3>
-        <p data-cn="临边防护这类隐患，可同时查看 GB、OSHA、ISO 45001 的条文表述，跨国项目与外资审核直接可用。" data-en="See how GB, OSHA and ISO 45001 each treat the same hazard — built for multinationals and cross-border projects.">临边防护这类隐患，可同时查看 GB、OSHA、ISO 45001 的条文表述，跨国项目与外资审核直接可用。</p>
+        <h3>同一隐患，多法域对照</h3>
+        <p>临边防护这类隐患，可同时查看 GB、OSHA、ISO 45001 的条文表述，跨国项目与外资审核直接可用。</p>
       </div>
       <div class="t-card">
         <div class="t-icon">🔁</div>
-        <h3 data-cn="整改闭环" data-en="Closed-loop rectification">整改闭环</h3>
-        <p data-cn="隐患台账跟踪责任人、期限与复查拍照销项，检查不再只是「留下记录」。" data-en="Track owners, deadlines and photo-based closeout — inspections become a loop, not a log.">隐患台账跟踪责任人、期限与复查拍照销项，检查不再只是「留下记录」。</p>
+        <h3>整改闭环</h3>
+        <p>隐患台账跟踪责任人、期限与复查拍照销项，检查不再只是「留下记录」。</p>
       </div>
     </div>
   </div>
@@ -530,34 +522,34 @@
 <!-- ============ FEATURES ============ -->
 <section id="features" style="background:var(--blue-50)">
   <div class="wrap center">
-    <div class="kicker" data-cn="四大模块" data-en="FOUR MODULES">四大模块</div>
-    <h2 data-cn="从发现隐患，到取证、学习、闭环" data-en="From discovery to citation, learning and closure">从发现隐患，到取证、学习、闭环</h2>
-    <p class="sub" data-cn="一个工作台覆盖 EHS 日常主链路。" data-en="One workbench for the daily EHS workflow.">一个工作台覆盖 EHS 日常主链路。</p>
+    <div class="kicker">四大模块</div>
+    <h2>从发现隐患，到取证、学习、闭环</h2>
+    <p class="sub">一个工作台覆盖 EHS 日常主链路。</p>
     <div class="cards" style="text-align:left">
       <div class="card">
-        <span class="tag" data-cn="最快上手" data-en="Fastest start">最快上手</span>
+        <span class="tag">最快上手</span>
         <div class="icon">📷</div>
-        <h3 data-cn="拍照识别隐患" data-en="Photo Hazard ID">拍照识别隐患</h3>
-        <p data-cn="现场照片 → 隐患清单 → 条文依据 → 整改建议，一次完成。" data-en="Site photo → hazard list → citation → fix, in one pass.">现场照片 → 隐患清单 → 条文依据 → 整改建议，一次完成。</p>
-        <div class="stat" data-cn="支持 GB / OSHA / ISO / EN 法域" data-en="GB / OSHA / ISO / EN jurisdictions">支持 GB / OSHA / ISO / EN 法域</div>
+        <h3>拍照识别隐患</h3>
+        <p>现场照片 → 隐患清单 → 条文依据 → 整改建议，一次完成。</p>
+        <div class="stat">支持 GB / OSHA / ISO / EN 法域</div>
       </div>
       <div class="card">
         <div class="icon">🔎</div>
-        <h3 data-cn="隐患标准查询" data-en="Standards Search">隐患标准查询</h3>
-        <p data-cn="按隐患关键词、行业、标准号三种入口，条文级精准检索。" data-en="Search by hazard keyword, industry or standard number — clause-level results.">按隐患关键词、行业、标准号三种入口，条文级精准检索。</p>
-        <div class="stat" data-cn="200,000+ 条款 · 15 大行业 · 双语" data-en="200,000+ clauses · 15 industries · bilingual">200,000+ 条款 · 15 大行业 · 双语</div>
+        <h3>隐患标准查询</h3>
+        <p>按隐患关键词、行业、标准号三种入口，条文级精准检索。</p>
+        <div class="stat">200,000+ 条款 · 15 大行业 · 双语</div>
       </div>
       <div class="card">
         <div class="icon">📑</div>
-        <h3 data-cn="标准文库" data-en="Standards Library">标准文库</h3>
-        <p data-cn="国内：GB/GBZ/AQ 官方渠道在线阅览与下载；国际：OSHA 全文 + ISO/EN 官方购买直链。" data-en="China: GB/GBZ/AQ via official channels. Global: OSHA full text + ISO/EN official purchase links.">国内：GB/GBZ/AQ 官方渠道在线阅览与下载；国际：OSHA 全文 + ISO/EN 官方购买直链。</p>
-        <div class="stat" data-cn="版权合规 · 版本实时更新" data-en="Copyright-safe · always current">版权合规 · 版本实时更新</div>
+        <h3>标准文库</h3>
+        <p>国内：GB/GBZ/AQ 官方渠道在线阅览与下载；国际：OSHA 全文 + ISO/EN 官方购买直链。</p>
+        <div class="stat">版权合规 · 版本实时更新</div>
       </div>
       <div class="card">
         <div class="icon">🎓</div>
-        <h3 data-cn="培训与考试" data-en="Training & Exams">培训与考试</h3>
-        <p data-cn="国内：注册安全工程师原创题库；国际：NEBOSH IGC / OSHA 30 知识卡与刷题。" data-en="China: original CSE question bank. Global: NEBOSH IGC / OSHA 30 flashcards and drills.">国内：注册安全工程师原创题库；国际：NEBOSH IGC / OSHA 30 知识卡与刷题。</p>
-        <div class="stat" data-cn="内置安全专家修炼库 · 12 册手册" data-en="Safety Expert Library · 12 handbooks">内置安全专家修炼库 · 12 册手册</div>
+        <h3>培训与考试</h3>
+        <p>国内：注册安全工程师原创题库；国际：NEBOSH IGC / OSHA 30 知识卡与刷题。</p>
+        <div class="stat">内置安全专家修炼库 · 12 册手册</div>
       </div>
     </div>
   </div>
@@ -566,34 +558,34 @@
 <!-- ============ GLOBAL STANDARDS ============ -->
 <section id="global" class="juris">
   <div class="wrap center">
-    <div class="kicker" style="color:#8fb0ff" data-cn="面向国内外安全人员" data-en="BUILT FOR GLOBAL EHS TEAMS">面向国内外安全人员</div>
-    <h2 data-cn="一个平台，多法域法规包" data-en="One platform, many regulation packs">一个平台，多法域法规包</h2>
-    <p class="sub" data-cn="同一 AI 引擎，切换法规包即切换法域；跨国团队共享同一份隐患台账。" data-en="One AI engine — switch packs to switch jurisdictions. Global teams share one hazard log.">同一 AI 引擎，切换法规包即切换法域；跨国团队共享同一份隐患台账。</p>
+    <div class="kicker" style="color:#8fb0ff">面向国内外安全人员</div>
+    <h2>一个平台，多法域法规包</h2>
+    <p class="sub">同一 AI 引擎，切换法规包即切换法域；跨国团队共享同一份隐患台账。</p>
     <div class="j-grid" style="text-align:left">
       <div class="j-card">
         <div class="flag">🇨🇳</div>
-        <h4 data-cn="中国 · China Pack" data-en="China Pack">中国 · China Pack</h4>
-        <p data-cn="国家标准 GB/GBZ/AQ、安全生产法、行业标准与地方标准。" data-en="GB/GBZ/AQ standards, Work Safety Law, industry and local standards.">国家标准 GB/GBZ/AQ、安全生产法、行业标准与地方标准。</p>
-        <div class="chip-row"><span class="chip">GB</span><span class="chip">GBZ</span><span class="chip">AQ</span><span class="chip">JGJ</span><span class="chip" data-cn="注安题库" data-en="CSE exam">注安题库</span></div>
+        <h4>中国 · China Pack</h4>
+        <p>国家标准 GB/GBZ/AQ、安全生产法、行业标准与地方标准。</p>
+        <div class="chip-row"><span class="chip">GB</span><span class="chip">GBZ</span><span class="chip">AQ</span><span class="chip">JGJ</span><span class="chip">注安题库</span></div>
       </div>
       <div class="j-card">
         <div class="flag">🇺🇸</div>
-        <h4 data-cn="美国 · US Pack" data-en="US Pack">美国 · US Pack</h4>
-        <p data-cn="OSHA 29 CFR 1910（一般工业）与 1926（建筑），条文全文开放。" data-en="OSHA 29 CFR 1910 (general industry) & 1926 (construction) — full public text.">OSHA 29 CFR 1910（一般工业）与 1926（建筑），条文全文开放。</p>
+        <h4>美国 · US Pack</h4>
+        <p>OSHA 29 CFR 1910（一般工业）与 1926（建筑），条文全文开放。</p>
         <div class="chip-row"><span class="chip">OSHA 1910</span><span class="chip">OSHA 1926</span><span class="chip">NIOSH</span><span class="chip">NFPA</span></div>
       </div>
       <div class="j-card">
         <div class="flag">🌍</div>
-        <h4 data-cn="国际 · Global Pack" data-en="Global Pack">国际 · Global Pack</h4>
-        <p data-cn="ISO 45001、EU-OSHA 框架指令、EN 标准、ILO 公约，多区域持续扩充。" data-en="ISO 45001, EU-OSHA framework directive, EN standards, ILO conventions — expanding.">ISO 45001、EU-OSHA 框架指令、EN 标准、ILO 公约，多区域持续扩充。</p>
+        <h4>国际 · Global Pack</h4>
+        <p>ISO 45001、EU-OSHA 框架指令、EN 标准、ILO 公约，多区域持续扩充。</p>
         <div class="chip-row"><span class="chip">ISO 45001</span><span class="chip">89/391/EEC</span><span class="chip">EN</span><span class="chip">ILO C155</span></div>
       </div>
     </div>
     <div class="compare" style="text-align:left">
       <span class="star">✨</span>
       <div>
-        <b data-cn="跨体系条文对照：" data-en="Cross-jurisdiction mapping: ">跨体系条文对照：</b>
-        <span data-cn="同一隐患在 GB / ISO 45001 / OSHA 下的条文并排呈现——为跨国在华工厂、出海中企与国际审核顾问而生。" data-en="the same hazard shown side-by-side under GB / ISO 45001 / OSHA — built for multinationals in China, Chinese companies going global, and international auditors.">同一隐患在 GB / ISO 45001 / OSHA 下的条文并排呈现——为跨国在华工厂、出海中企与国际审核顾问而生。</span>
+        <b>跨体系条文对照：</b>
+        <span>同一隐患在 GB / ISO 45001 / OSHA 下的条文并排呈现——为跨国在华工厂、出海中企与国际审核顾问而生。</span>
       </div>
     </div>
   </div>
@@ -602,24 +594,24 @@
 <!-- ============ TRUST ============ -->
 <section id="trust">
   <div class="wrap center">
-    <div class="kicker" data-cn="安全行业，可信第一" data-en="TRUST FIRST">安全行业，可信第一</div>
-    <h2 data-cn="AI 引用可信 · 数据合规" data-en="Credible AI. Compliant data.">AI 引用可信 · 数据合规</h2>
-    <p class="sub" data-cn="在安全领域，一条错误引用比没有引用更危险。我们把可靠性做成了产品能力。" data-en="In safety, a wrong citation is worse than none. Reliability is our product feature.">在安全领域，一条错误引用比没有引用更危险。我们把可靠性做成了产品能力。</p>
+    <div class="kicker">安全行业，可信第一</div>
+    <h2>AI 引用可信 · 数据合规</h2>
+    <p class="sub">在安全领域，一条错误引用比没有引用更危险。我们把可靠性做成了产品能力。</p>
     <div class="trust-grid" style="text-align:left">
       <div class="t-card">
         <div class="t-icon">🧷</div>
-        <h3 data-cn="条文级检索 + 原文回显" data-en="Clause-level retrieval">条文级检索 + 原文回显</h3>
-        <p data-cn="引用只来自结构化知识库，附标准号、条款号与版本年号；低置信度进人工复核队列。" data-en="Citations come only from a structured library, with standard no., clause no. and year; low-confidence items go to human review.">引用只来自结构化知识库，附标准号、条款号与版本年号；低置信度进人工复核队列。</p>
+        <h3>条文级检索 + 原文回显</h3>
+        <p>引用只来自结构化知识库，附标准号、条款号与版本年号；低置信度进人工复核队列。</p>
       </div>
       <div class="t-card">
         <div class="t-icon">🔒</div>
-        <h3 data-cn="数据合规" data-en="Data compliance">数据合规</h3>
-        <p data-cn="国内遵守 PIPL 并完成等保备案；国际版遵守 GDPR，欧盟用户数据可删除、可携带。" data-en="PIPL + MLPS registration in China; GDPR-compliant international edition with data deletion &amp; portability.">国内遵守 PIPL 并完成等保备案；国际版遵守 GDPR，欧盟用户数据可删除、可携带。</p>
+        <h3>数据合规</h3>
+        <p>国内遵守 PIPL 并完成等保备案；国际版遵守 GDPR，欧盟用户数据可删除、可携带。</p>
       </div>
       <div class="t-card">
         <div class="t-icon">⚖️</div>
-        <h3 data-cn="清晰的角色边界" data-en="Clear role boundaries">清晰的角色边界</h3>
-        <p data-cn="本平台为 AI 辅助工具，不替代注册安全工程师 / 专业人员的现场判断；版权内容均获授权或链接官方渠道。" data-en="An AI assistant — not a replacement for professional judgment. Copyrighted content is licensed or linked to official sources.">本平台为 AI 辅助工具，不替代注册安全工程师 / 专业人员的现场判断；版权内容均获授权或链接官方渠道。</p>
+        <h3>清晰的角色边界</h3>
+        <p>本平台为 AI 辅助工具，不替代注册安全工程师 / 专业人员的现场判断；版权内容均获授权或链接官方渠道。</p>
       </div>
     </div>
   </div>
@@ -628,40 +620,40 @@
 <!-- ============ PRICING ============ -->
 <section id="pricing" style="background:var(--blue-50)">
   <div class="wrap center">
-    <div class="kicker" data-cn="价格" data-en="PRICING">价格</div>
-    <h2 data-cn="个人免费起步，团队按需升级" data-en="Start free. Scale when your team does.">个人免费起步，团队按需升级</h2>
+    <div class="kicker">价格</div>
+    <h2>个人免费起步，团队按需升级</h2>
     <div class="price-grid" style="text-align:left">
       <div class="p-card">
-        <h3 data-cn="Free" data-en="Free">Free</h3>
-        <div class="price"><span data-cn="¥0" data-en="$0">¥0</span><small data-cn="/永久" data-en="/forever">/永久</small></div>
+        <h3>Free</h3>
+        <div class="price"><span>¥0</span><small>/永久</small></div>
         <ul>
-          <li data-cn="每天 3 次拍照识隐患" data-en="3 photo scans / day">每天 3 次拍照识隐患</li>
-          <li data-cn="标准条文查询与在线阅览" data-en="Standards search & online reading">标准条文查询与在线阅览</li>
-          <li data-cn="单法域（默认）" data-en="One jurisdiction">单法域（默认）</li>
+          <li>每天 3 次拍照识隐患</li>
+          <li>标准条文查询与在线阅览</li>
+          <li>单法域（默认）</li>
         </ul>
-        <a class="btn btn-ghost" href="javascript:void(0)" onclick="landingToast()" data-cn="免费开始" data-en="Start free">免费开始</a>
+        <a class="btn btn-ghost" href="javascript:void(0)" onclick="landingToast()">免费开始</a>
       </div>
       <div class="p-card hot">
-        <span class="hot-tag" data-cn="最受欢迎" data-en="MOST POPULAR">最受欢迎</span>
+        <span class="hot-tag">最受欢迎</span>
         <h3>Pro</h3>
-        <div class="price"><span data-cn="¥30" data-en="$9.9">¥30</span><small data-cn="/月" data-en="/mo">/月</small></div>
+        <div class="price"><span>¥30</span><small>/月</small></div>
         <ul>
-          <li data-cn="无限拍照识隐患" data-en="Unlimited photo scans">无限拍照识隐患</li>
-          <li data-cn="双语检查报告（PDF / Word）" data-en="Bilingual reports (PDF / Word)">双语检查报告（PDF / Word）</li>
-          <li data-cn="跨体系条文对照（GB ↔ ISO ↔ OSHA）" data-en="Cross-jurisdiction mapping (GB ↔ ISO ↔ OSHA)">跨体系条文对照（GB ↔ ISO ↔ OSHA）</li>
-          <li data-cn="全部法域法规包" data-en="All regulation packs">全部法域法规包</li>
+          <li>无限拍照识隐患</li>
+          <li>双语检查报告（PDF / Word）</li>
+          <li>跨体系条文对照（GB ↔ ISO ↔ OSHA）</li>
+          <li>全部法域法规包</li>
         </ul>
-        <a class="btn btn-primary" href="javascript:void(0)" onclick="landingToast()" data-cn="升级 Pro" data-en="Go Pro">升级 Pro</a>
+        <a class="btn btn-primary" href="javascript:void(0)" onclick="landingToast()">升级 Pro</a>
       </div>
       <div class="p-card">
-        <h3 data-cn="Enterprise" data-en="Enterprise">Enterprise</h3>
-        <div class="price"><small data-cn="按站点报价 · 年费制" data-en="Per site · annual">按站点报价 · 年费制</small></div>
+        <h3>Enterprise</h3>
+        <div class="price"><small>按站点报价 · 年费制</small></div>
         <ul>
-          <li data-cn="多站点看板与隐患台账" data-en="Multi-site dashboard & hazard log">多站点看板与隐患台账</li>
-          <li data-cn="API 集成 / SSO" data-en="API integration / SSO">API 集成 / SSO</li>
-          <li data-cn="定制法规包与私有化部署" data-en="Custom packs & on-premise">定制法规包与私有化部署</li>
+          <li>多站点看板与隐患台账</li>
+          <li>API 集成 / SSO</li>
+          <li>定制法规包与私有化部署</li>
         </ul>
-        <a class="btn btn-ghost" href="javascript:void(0)" onclick="landingToast()" data-cn="联系销售" data-en="Contact sales">联系销售</a>
+        <a class="btn btn-ghost" href="javascript:void(0)" onclick="landingToast()">联系销售</a>
       </div>
     </div>
   </div>
@@ -671,15 +663,14 @@
 <section style="padding-top:0">
   <div class="wrap">
     <div class="final-cta">
-      <h2 data-cn="下次巡检，让 AI 替你翻标准" data-en="On your next walkthrough, let AI find the clause.">下次巡检，让 AI 替你翻标准</h2>
-      <p data-cn="微信 / 浏览器扫码即用 —— 国内版即刻体验，国际版 Web / PWA 同步开放。" data-en="Scan to start — China edition via WeChat, International edition on Web / PWA.">微信 / 浏览器扫码即用 —— 国内版即刻体验，国际版 Web / PWA 同步开放。</p>
+      <h2>下次巡检，让 AI 替你翻标准</h2>
+      <p>微信 / 浏览器扫码即用 —— 国内版即刻体验，国际版 Web / PWA 同步开放。</p>
       <div class="hero-cta" style="justify-content:center">
-        <a class="btn btn-primary" href="prototype/home.html" data-cn="🇨🇳 体验中文版 App 原型" data-en="🇨🇳 Chinese app prototype">🇨🇳 体验中文版 App 原型</a>
-        <a class="btn btn-ghost" href="prototype/en/home.html" data-cn="🇬🇧 English Prototype" data-en="🇬🇧 English app prototype">🇬🇧 English Prototype</a>
+        <a class="btn btn-primary" href="prototype/home.html">🇨🇳 体验中文版 App 原型</a>
       </div>
       <div class="qr">
         <div class="qr-box">QR</div>
-        <span data-cn="微信 / 浏览器 扫码即用" data-en="WeChat / browser">微信 / 浏览器 扫码即用</span>
+        <span>微信 / 浏览器 扫码即用</span>
       </div>
     </div>
   </div>
@@ -688,27 +679,12 @@
 <!-- ============ FOOTER ============ -->
 <footer>
   <div class="wrap foot">
-    <span class="slogan" data-cn="让每一条隐患都有标准依据 · Every hazard, backed by a standard." data-en="Every hazard, backed by a standard. · 让每一条隐患都有标准依据">让每一条隐患都有标准依据 · Every hazard, backed by a standard.</span>
-    <span data-cn="© 2026 EHS-AI 智能应用平台（SafeLens AI）· 初稿示意页面" data-en="© 2026 SafeLens AI (EHS-AI Platform) · Draft landing page">© 2026 EHS-AI 智能应用平台（SafeLens AI）· 初稿示意页面</span>
+    <span class="slogan">让每一条隐患都有标准依据</span>
+    <span>© 2026 EHS-AI 智能应用平台</span>
   </div>
 </footer>
 
 <script>
-  // ---- bilingual toggle: every translatable element carries data-cn / data-en ----
-  const html = document.documentElement;
-  const btn = document.getElementById('langToggle');
-  let lang = 'zh';
-
-  function applyLang(next){
-    document.querySelectorAll('[data-cn]').forEach(el=>{
-      const v = el.dataset[next === 'zh' ? 'cn' : 'en'];
-      if(v) el.innerHTML = v;
-    });
-    html.lang = next === 'zh' ? 'zh-CN' : 'en';
-    btn.textContent = next === 'zh' ? 'EN' : '中文';
-    lang = next;
-  }
-  btn.addEventListener('click', ()=> applyLang(lang === 'zh' ? 'en' : 'zh'));
 
   // 演示提示（价格按钮等占位交互）
   window.landingToast = function(){

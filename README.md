@@ -1,6 +1,6 @@
 # EHS-AI 智能应用平台（安全行业 AI 平台）
 
-> 让每一条隐患都有标准依据 · Every hazard, backed by a standard.
+> 让每一条隐患都有标准依据
 
 在线访问：**https://pangdt790805321.github.io/English3/**
 
@@ -8,8 +8,8 @@
 
 | 板块 | 说明 | 入口 |
 |---|---|---|
-| ① 拍照识隐患 | 拍照 AI 识别 / 手动登记隐患，关联标准条文，生成双语检查报告，整改闭环台账 | `/prototype/home.html` |
-| ② 规范标准查询 | 50+ 条文（GB/JGJ/GBZ/TSG/OSHA/ISO）检索、法域筛选、引用夹 | `/prototype/search.html` |
+| ① 拍照识隐患 | 拍照 AI 识别 / 手动登记隐患，关联标准条文，生成检查报告，整改闭环台账 | `/prototype/home.html` |
+| ② 规范标准查询 | 50+ 条文（GB/JGJ/GBZ/TSG 及 OSHA/ISO 对照）检索、法域筛选、引用夹 | `/prototype/search.html` |
 | ③ 安全专家修炼库 | 12 册深度学习手册 + 12 张 A4 检查表 + 18 个月路线，进度打卡 | `/prototype/academy.html` |
 | ④⑤ 板块四/五 | 规划中（候选：MSDS、案例库、注安题库、企业看板） | — |
 | 个人中心 | 法规包管理、我的检查/报告/引用夹 | `/prototype/profile.html` |
@@ -39,7 +39,6 @@ index.html            平台首页（板块导航）
 admin.html            数据看板
 analytics-config.js   全站统计配置
 prototype/            中文版 App（工作台/拍照/结果/台账/报告/修炼库/个人中心…）
-prototype/en/         英文国际版原型
 library/              安全专家修炼库文档（12 册手册+检查表）
 demo/                 真实 AI 识别 Demo（BYOK）
 ```
