@@ -69,9 +69,9 @@
 
     <div class="chip-row" id="filterRow" style="display:none;margin:12px 0 4px">
       <span class="chip on" data-f="all">全部法域</span>
-      <span class="chip" data-f="GB">🇨🇳 GB/JGJ</span>
+      <span class="chip" data-f="GB">GB/JGJ</span>
       <span class="chip" data-f="法规">📜 法规</span>
-      <span class="chip" data-f="OSHA">🇺🇸 OSHA</span>
+      <span class="chip" data-f="OSHA">OSHA</span>
       <span class="chip" data-f="ISO">🌐 ISO</span>
     </div>
 
@@ -101,7 +101,7 @@
     <a href="academy.html"><span class="ico">📚</span>修炼库</a>
   </nav>
 
-<script src="app.js?v=198"></script>
+<script src="app.js?v=201"></script>
 <script>
 let activeFilter = 'all', activeCat = 'all', lastQuery = '';
 document.getElementById('libCount').textContent = CLAUSES.length + ' 条 · 多法域';
@@ -146,6 +146,15 @@ function search(q){
     '“' + q + '” 命中 ' + hits.length + ' 条（库内 ' + CLAUSES.length + ' 条）' +
     (activeFilter!=='all' ? ' · 法域：' + activeFilter : '') +
     (activeCat!=='all' ? ' · 分类：' + activeCat : '');
+  if(!hits.length && (activeCat!=='all' || activeFilter!=='all')){
+    const relax = findClauses(q);
+    if(relax.length){
+      document.getElementById('resultMeta').textContent =
+        '“' + q + '” 在当前筛选下无命中，已为你展示全部分类的 ' + relax.length + ' 条结果';
+      document.getElementById('resultList').innerHTML = relax.map(c=>card(c, q.trim())).join('');
+      return;
+    }
+  }
   document.getElementById('resultList').innerHTML = hits.length
     ? hits.map(c=>card(c, q.trim())).join('')
     : '<div class="empty"><span class="big">🤔</span>未命中，换个关键词试试</div>';
@@ -219,8 +228,13 @@ document.querySelectorAll('.hot').forEach(h=>{
     search(h.dataset.q);
   });
 });
-document.getElementById('goBtn').addEventListener('click',()=>search(document.getElementById('q').value));
-document.getElementById('q').addEventListener('keydown',e=>{ if(e.key==='Enter') search(e.target.value); });
+function freshSearch(q){
+  activeFilter='all'; activeCat='all';
+  document.querySelectorAll('#filterRow .chip').forEach(x=>x.classList.toggle('on', x.dataset.f==='all'));
+  renderCatRow(); search(q);
+}
+document.getElementById('goBtn').addEventListener('click',()=>freshSearch(document.getElementById('q').value));
+document.getElementById('q').addEventListener('keydown',e=>{ if(e.key==='Enter') freshSearch(e.target.value); });
 
 document.querySelectorAll('#filterRow .chip').forEach(c=>{
   c.addEventListener('click',()=>{

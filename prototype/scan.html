@@ -18,6 +18,7 @@
   .manual-form.show{display:block}
 </style>
 <script src="../analytics-config.js"></script>
+<script src="../ai-config.js"></script>
 <script src="tracker.js"></script>
 </head>
 <body>
@@ -26,13 +27,13 @@
   <header class="appbar">
     <a class="back" href="home.html">‹</a>
     <h1>拍照识隐患</h1>
-    <span class="pack">🇨🇳 中国包 GB</span>
+    <span class="pack">中国包 GB</span>
   </header>
 
   <main class="page">
 
-    <!-- ① API 配置（BYOK，Key 存本机） -->
-    <section class="card" style="padding:14px">
+    <!-- ① API 配置（平台已配置时自动隐藏） -->
+    <section class="card" id="keyCard" style="padding:14px">
       <b style="font-size:13.5px">🔑 AI 识别配置（可选）</b>
       <p style="font-size:11.5px;color:var(--ink-soft);margin:5px 0 9px;line-height:1.6">
         填写 API Key 后可使用 AI 识别（经本机代理 8643 端口，Key 仅存本机浏览器）；
@@ -46,6 +47,11 @@
         </select>
       </div>
       <button class="btn btn-ghost btn-sm" style="margin-top:9px" onclick="saveKey()">保存配置</button>
+    </section>
+
+    <section class="card" id="aiReady" style="display:none;padding:14px;border:1.5px solid var(--green);background:var(--green-bg)">
+      <b style="font-size:13.5px;color:var(--green)">✅ 平台 AI 已启用</b>
+      <p style="font-size:12px;color:var(--ink-soft);margin-top:4px">无需任何配置，选择照片后直接点击"AI 识别照片"即可。</p>
     </section>
 
     <!-- ② 检查信息 -->
@@ -128,7 +134,7 @@
     <button class="btn btn-primary" onclick="goResult()">查看本次结果 →</button>
   </div>
 
-<script src="app.js?v=198"></script>
+<script src="app.js?v=201"></script>
 <script>
 let mode = '综合';
 let photo = null;           // 压缩后的 dataURL
@@ -137,6 +143,10 @@ let pickedCite = null;      // 手动登记选中的条文
 document.getElementById('today').textContent = todayISO();
 document.getElementById('apiKey').value = DB.apiKey();
 document.getElementById('model').value = DB.model();
+if(platformAIOn()){
+  document.getElementById('keyCard').style.display = 'none';
+  document.getElementById('aiReady').style.display = '';
+}
 
 // 保证存在当前检查任务（12 小时内的任务继续使用）
 function ensureInspection(){
@@ -185,7 +195,7 @@ async function runAI(){
   ins.mode = mode; DB.saveInspection(ins);
 
   if(!photo){ toast('请先选择照片，或改用手动登记'); return; }
-  if(!DB.apiKey()){ toast('未配置 API Key：请填写并保存，或使用手动登记'); return; }
+  if(!getAIKey()){ toast('AI 未启用：站长可在 ai-config.js 配置平台 Key，或您在上方填写自己的 Key'); return; }
 
   const overlay = document.getElementById('analyzing');
   const steps = document.querySelectorAll('#stepList .step-item');

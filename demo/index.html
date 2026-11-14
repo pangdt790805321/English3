@@ -51,6 +51,7 @@
   .warn-box{background:#fff8ec;border:1px solid #ffe1ad;border-radius:12px;padding:12px 14px;font-size:12.5px;color:#8a5a00;margin-bottom:16px;line-height:1.7}
 </style>
 <script src="../analytics-config.js"></script>
+<script src="../ai-config.js"></script>
 <script src="../prototype/tracker.js"></script>
 </head>
 <body>
@@ -186,7 +187,8 @@ const SYSTEM_PROMPT = () => `你是一名资深 EHS（环境健康安全）检�
 
 // 识别
 $('runBtn').addEventListener('click', async ()=>{
-  if(!$('apiKey').value.trim()){ setStatus('请先填写 API Key', true); return; }
+  const hasKey = (window.EHS_AI_CONFIG && window.EHS_AI_CONFIG.key) || $('apiKey').value.trim();
+  if(!hasKey){ setStatus('请先填写 API Key（或站长在 ai-config.js 配置）', true); return; }
   if(!imgData){ setStatus('请先上传照片', true); return; }
   $('resultPanel').style.display = 'none';
 
@@ -205,12 +207,13 @@ $('runBtn').addEventListener('click', async ()=>{
     temperature: 0.1
   };
   const headers = { 'Content-Type':'application/json' };
+  const effKey = (window.EHS_AI_CONFIG && window.EHS_AI_CONFIG.key) || $('apiKey').value.trim();
   let url = API_URL;
   if(useProxy){
     url = '/api/analyze';
     headers['X-Api-Key'] = $('apiKey').value.trim();
   } else {
-    headers['Authorization'] = 'Bearer ' + $('apiKey').value.trim(); // 公网直连
+    headers['Authorization'] = 'Bearer ' + effKey; // 公网直连（优先平台Key）
   }
 
   setBusy(true, '模型识别中，通常需要 5–20 秒…');

@@ -26,7 +26,7 @@
     <a class="btn btn-primary" href="report.html">生成检查报告 →</a>
   </div>
 
-<script src="app.js?v=198"></script>
+<script src="app.js?v=201"></script>
 <script>
 const id = new URLSearchParams(location.search).get('id');
 const h = id ? DB.hazard(id) : null;
@@ -62,8 +62,8 @@ if(h){
     ${h.citation ? `
     <div class="jtabs">
       <button class="on" data-pane="mine">本条引用</button>
-      <button data-pane="gb">🇨🇳 GB 对照</button>
-      <button data-pane="osha">🇺🇸 OSHA</button>
+      <button data-pane="gb">GB 对照</button>
+      <button data-pane="osha">OSHA</button>
       <button data-pane="iso">🌐 ISO</button>
     </div>
     <div class="jpane on" id="pane-mine">

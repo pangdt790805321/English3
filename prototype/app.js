@@ -53,11 +53,16 @@ function fmt(d){ const n = new Date(d); const p = x => String(x).padStart(2,'0')
 function todayISO(){ return new Date().toISOString().slice(0,10); }
 function addEvent(h, txt){ h.timeline = h.timeline||[]; h.timeline.push({ t: Date.now(), txt }); DB.saveHazard(h); }
 
+// ---------- AI Key 来源：优先平台内置（ai-config.js），其次访问者自填 ----------
+function getAIKey(){ return (window.EHS_AI_CONFIG && window.EHS_AI_CONFIG.key) || DB.apiKey(); }
+function getAIModel(){ return (window.EHS_AI_CONFIG && window.EHS_AI_CONFIG.model) || DB.model(); }
+function platformAIOn(){ return !!(window.EHS_AI_CONFIG && window.EHS_AI_CONFIG.key); }
+
 // ---------- AI 识别（经本地代理调用多模态模型，BYOK） ----------
 async function analyzePhotoAI({ dataUrl, mode, juris, onStep }){
   const step = i => onStep && onStep(i);
-  const key = DB.apiKey(); if(!key) throw new Error('NO_KEY');
-  const model = DB.model();
+  const key = getAIKey(); if(!key) throw new Error('NO_KEY');
+  const model = getAIModel();
   const sys = `你是一名资深 EHS 检查专家。识别照片中可确认的安全隐患，严格按 JSON 数组输出（无其他文字、无 markdown）：
 [{"hazard":"隐患描述（中文，具体到部位与问题）","risk":"high|medium|low|review","confidence":0-100,"citation_standard":"建议标准号（不确定填 null）","citation_text":"条文关键内容（简短摘述，禁止编造原文）","fix":"整改建议（一句话，可执行）"}]
 要求：只列照片中真实可见、可确认的隐患，宁缺毋滥；无关照片返回 []；置信度低于70用 review；引用偏好：${juris}。`;
@@ -83,7 +88,16 @@ async function analyzePhotoAI({ dataUrl, mode, juris, onStep }){
     url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
     headers['Authorization'] = 'Bearer ' + key;
   }
-  const resp = await fetch(url, { method:'POST', headers, body: JSON.stringify(body) });
+  let resp;
+  try{
+    resp = await fetch(url, { method:'POST', headers, body: JSON.stringify(body) });
+  }catch(netErr){
+    // 直连被跨域拦截时，尝试平台配置的 Worker 代理
+    const worker = window.EHS_AI_CONFIG && window.EHS_AI_CONFIG.worker;
+    if(!IS_LOCAL && worker){
+      resp = await fetch(worker, { method:'POST', headers:{'Content-Type':'application/json','X-Api-Key': key}, body: JSON.stringify(body) });
+    } else throw netErr;
+  }
   step(2);
   const data = await resp.json();
   if(!resp.ok) throw new Error(data.error?.message || ('HTTP ' + resp.status));
@@ -360,8 +374,13 @@ const CLAUSES = [
   { id:'c198', cat:'职业健康', sys:'法规', code:'《职业病分类和目录》生物因素', clause:'职业性传染病', title:'布病/炭疽职业防护', text:'从事饲养、屠宰、皮毛加工等接触布鲁氏菌、炭疽杆菌作业，应接种疫苗、佩戴手套口罩防护服，出现发热等症状及时就医并告知职业接触史。', xref:'GBZ 188-2014', kw:'布病 布鲁氏菌 炭疽 饲养 屠宰 皮毛 疫苗 接触史' },
 ];
 
+const flat = s => String(s||'').toLowerCase().replace(/[\s\-—–]/g, '');
 function findClauses(q){
   if(!q || !q.trim()) return [];
   const kw = q.trim().toLowerCase();
-  return CLAUSES.filter(c => (c.title + ' ' + c.text + ' ' + c.code + ' ' + c.kw).toLowerCase().includes(kw));
+  const fk = flat(q);
+  return CLAUSES.filter(c => {
+    const hay = (c.title + ' ' + c.text + ' ' + c.code + ' ' + c.kw).toLowerCase();
+    return hay.includes(kw) || flat(hay).includes(fk);
+  });
 }
