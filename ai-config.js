@@ -1,20 +1,36 @@
 /* ============================================================
  * EHS-AI 平台 · AI 识别服务配置（站长填写一次，全体访问者免配置）
  * ------------------------------------------------------------
- * 想让所有人"有网络就能识别、无需填 API Key"：
- * 1. 到 https://open.bigmodel.cn 注册并创建 API Key
- *    （glm-4v-flash 模型免费，适合全员使用）
- * 2. 把 Key 粘贴到下面 key 的两个引号之间，重新推送 GitHub
- * 3. 完成。所有访问者打开拍照识隐患即可直接用 AI
+ * 三种获得 Key 的方式（任选其一，都是免费的）：
  *
- * ⚠ 注意：
- * - Key 会随静态站点公开，任何人可见。请只用"免费模型"
- *   （glm-4v-flash），并在开放平台设置用量提醒，防止被盗刷。
- * - 如需保密，可部署 Cloudflare Worker 代理（见 demo/worker.js，
- *   一分钟部署），把 worker 地址填到下面 worker 字段，key 留空。
+ * 【方式A·智谱】https://open.bigmodel.cn
+ *   手机号注册 → 登录后点右上角「控制台」→ 左侧「API Keys」
+ *   →「创建 API Key」→ 复制。glm-4v-flash 模型免费。
+ *   （入口直达：https://open.bigmodel.cn/usercenter/apikeys）
+ *
+ * 【方式B·硅基流动】https://siliconflow.cn
+ *   注册 → 控制台「API 密钥」→ 新建。Qwen/Qwen2.5-VL 免费档。
+ *
+ * 【方式C·阿里百炼】https://bailian.console.aliyun.com
+ *   注册 → API-KEY 管理。qwen-vl 系列有免费额度。
+ *
+ * 填写方法：把 Key 粘到 key 引号里；若用 B/C 等其他服务商，
+ * 再把 baseUrl 换成注释里对应的地址、model 换成该家的视觉模型名。
+ * 填好后推送 GitHub（或告诉我帮你填），全站访问者即可直接使用。
  * ============================================================ */
 window.EHS_AI_CONFIG = {
-  key: '',                    // ← 站长 API Key（直接调用模式）
-  model: 'glm-4v-flash',      // 模型，免费档用 glm-4v-flash
-  worker: ''                  // ← 可选：Cloudflare Worker 代理地址（https://xxx.workers.dev），CORS 受阻时自动走它
+  key: '',
+  baseUrl: '',                // 留空 = 智谱官方 https://open.bigmodel.cn/api/paas/v4
+                              // 硅基流动: https://api.siliconflow.cn/v1
+                              // 阿里百炼: https://dashscope.aliyuncs.com/compatible-mode/v1
+  model: 'glm-4v-flash',      // 智谱: glm-4v-flash（免费）/ 硅基流动: Qwen/Qwen2.5-VL-32B-Instruct / 百炼: qwen-vl-plus
+  worker: ''                  // 可选：Cloudflare Worker 代理地址（跨域受阻时自动启用，见 demo/worker.js）
 };
+
+// 各服务商直连地址（自动选择）
+(function(){
+  const c = window.EHS_AI_CONFIG;
+  if(!c.baseUrl){
+    c.baseUrl = 'https://open.bigmodel.cn/api/paas/v4';
+  }
+})();

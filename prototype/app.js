@@ -85,7 +85,7 @@ async function analyzePhotoAI({ dataUrl, mode, juris, onStep }){
     url = 'http://' + location.hostname + ':8643/api/analyze';
     headers['X-Api-Key'] = key;
   } else {
-    url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+    url = ((window.EHS_AI_CONFIG && window.EHS_AI_CONFIG.baseUrl) || 'https://open.bigmodel.cn/api/paas/v4') + '/chat/completions';
     headers['Authorization'] = 'Bearer ' + key;
   }
   let resp;

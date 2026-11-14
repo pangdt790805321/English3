@@ -31,7 +31,8 @@ export default {
       { status: 400, headers: { 'Content-Type': 'application/json', ...cors } });
 
     const body = await request.text();
-    const r = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+    const upstream = (globalThis.UPSTREAM || 'https://open.bigmodel.cn/api/paas/v4') + '/chat/completions';
+    const r = await fetch(upstream, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
       body,

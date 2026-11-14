@@ -126,7 +126,7 @@
 
 <script>
 const $ = id => document.getElementById(id);
-const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+const API_URL = ((window.EHS_AI_CONFIG && window.EHS_AI_CONFIG.baseUrl) || 'https://open.bigmodel.cn/api/paas/v4') + '/chat/completions';
 
 // file:// 检测
 if(location.protocol === 'file:') $('fileWarn').style.display = '';
