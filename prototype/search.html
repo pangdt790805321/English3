@@ -70,9 +70,12 @@
     <div class="chip-row" id="filterRow" style="display:none;margin:12px 0 4px">
       <span class="chip on" data-f="all">全部法域</span>
       <span class="chip" data-f="GB">🇨🇳 GB/JGJ</span>
+      <span class="chip" data-f="法规">📜 法规</span>
       <span class="chip" data-f="OSHA">🇺🇸 OSHA</span>
       <span class="chip" data-f="ISO">🌐 ISO</span>
     </div>
+
+    <div class="chip-row" id="catRow" style="display:none;margin:0 0 4px"></div>
 
     <!-- 我的引用夹 -->
     <div class="sec-head"><h2>⭐ 我的引用夹</h2><span style="font-size:12px;color:var(--ink-soft)" id="favCount"></span></div>
@@ -98,10 +101,10 @@
     <a href="academy.html"><span class="ico">📚</span>修炼库</a>
   </nav>
 
-<script src="app.js"></script>
+<script src="app.js?v=134"></script>
 <script>
-let activeFilter = 'all', lastQuery = '';
-document.getElementById('libCount').textContent = CLAUSES.length + ' 条 · 三法域';
+let activeFilter = 'all', activeCat = 'all', lastQuery = '';
+document.getElementById('libCount').textContent = CLAUSES.length + ' 条 · 多法域';
 
 function sysColor(s){ return s==='OSHA' ? '#8a4b08' : (s==='ISO' ? '#0ea36b' : 'var(--blue-600)'); }
 
@@ -135,12 +138,14 @@ function card(c, kw){
 function search(q){
   lastQuery = q;
   const hits = findClauses(q)
-    .filter(c => activeFilter==='all' || c.sys===activeFilter);
+    .filter(c => (activeFilter==='all' || c.sys===activeFilter) && (activeCat==='all' || c.cat===activeCat));
   document.getElementById('results').style.display = '';
   document.getElementById('filterRow').style.display = 'flex';
+  renderCatRow();
   document.getElementById('resultMeta').textContent =
     '“' + q + '” 命中 ' + hits.length + ' 条（库内 ' + CLAUSES.length + ' 条）' +
-    (activeFilter!=='all' ? ' · 筛选：' + activeFilter : '');
+    (activeFilter!=='all' ? ' · 法域：' + activeFilter : '') +
+    (activeCat!=='all' ? ' · 分类：' + activeCat : '');
   document.getElementById('resultList').innerHTML = hits.length
     ? hits.map(c=>card(c, q.trim())).join('')
     : '<div class="empty"><span class="big">🤔</span>未命中，换个关键词试试</div>';
@@ -172,20 +177,44 @@ function renderFav(){
     : '<p style="font-size:12.5px;color:var(--ink-soft)">还没有收藏。检索条文后点击 ⭐ 加入，写报告时可直接引用。</p>';
 }
 
+function renderCatRow(){
+  const cats = {};
+  CLAUSES.forEach(c => cats[c.cat] = (cats[c.cat]||0)+1);
+  const row = document.getElementById('catRow');
+  row.innerHTML = ['all'].concat(Object.keys(cats)).map(k =>
+    k==='all'
+      ? `<span class="chip ${activeCat==='all'?'on':''}" onclick="setCat('all')">全部分类 ${CLAUSES.length}</span>`
+      : `<span class="chip ${activeCat===k?'on':''}" onclick="setCat('${k}')">${k} ${cats[k]}</span>`
+  ).join('');
+}
+function setCat(k){
+  activeCat = k; renderCatRow();
+  if(lastQuery) search(lastQuery);
+}
+
 function renderLib(){
-  document.getElementById('libSection').innerHTML =
-    `<section class="card" style="display:grid;gap:4px">${CLAUSES.slice().sort((a,b)=>a.sys.localeCompare(b.sys)||a.code.localeCompare(b.code)).map(c=>`
-      <div style="display:flex;gap:9px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)">
-        <span class="sys-badge" style="background:${sysColor(c.sys)}">${c.sys}</span>
-        <div style="flex:1;font-size:12.5px"><b>${esc(c.code)}</b>${c.clause?' §'+c.clause:''} · ${esc(c.title)}</div>
-        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('q').value='${esc(c.kw.split(' ')[0])}';search('${esc(c.kw.split(' ')[0])}')">相关</button>
-      </div>`).join('')}</section>`;
+  const cats = {};
+  CLAUSES.forEach(c => { (cats[c.cat] = cats[c.cat] || []).push(c); });
+  document.getElementById('libSection').innerHTML = Object.entries(cats)
+    .sort((a,b)=>b[1].length-a[1].length)
+    .map(([cat, list])=>`
+    <div style="margin-bottom:14px">
+      <div style="font-size:13px;font-weight:800;color:var(--blue-900);margin:10px 2px 6px">${cat} <span style="color:#9aa5b8;font-weight:500">${list.length} 条</span></div>
+      <section class="card" style="display:grid;gap:0;padding:2px 14px">
+      ${list.map(c=>`
+        <div style="display:flex;gap:9px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)">
+          <span class="sys-badge" style="background:${sysColor(c.sys)}">${c.sys}</span>
+          <div style="flex:1;font-size:12.5px;min-width:0"><b>${esc(c.code)}</b>${c.clause?' §'+esc(c.clause):''} · ${esc(c.title)}</div>
+          <button class="btn btn-ghost btn-sm" style="flex:none" onclick="document.getElementById('q').value='${esc(c.kw.split(' ')[0])}';activeFilter='all';search('${esc(c.kw.split(' ')[0])}')">相关</button>
+        </div>`).join('')}
+      </section>
+    </div>`).join('');
 }
 
 document.querySelectorAll('.hot').forEach(h=>{
   h.addEventListener('click',()=>{
     document.getElementById('q').value = h.dataset.q;
-    activeFilter='all';
+    activeFilter='all'; activeCat='all';
     document.querySelectorAll('#filterRow .chip').forEach(x=>x.classList.toggle('on', x.dataset.f==='all'));
     search(h.dataset.q);
   });
